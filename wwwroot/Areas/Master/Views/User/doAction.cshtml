@@ -1,0 +1,207 @@
+﻿@model LONG.Models.sys_user
+@using LONG.Models
+@{
+    ViewBag.Title = "doAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_useranme_empty = "用户名为空或输入错误，长度不能小于5位，由英文和数据组成，首字符必须为英文字母";
+    var js_password_empty = "密码为空或输入错误，密码长度不能小于6位，可输入任何字符，不能与用户名一致！";
+    var js_password_error = "两次密码输入不一致，请重新输入";
+    var js_add_ok = "恭喜！帐户保存成功";
+    var js_add_no = "抱歉！帐户保存失败，请检查您的输入项是否正确";
+    var username_yes = "用户名已存在";
+    var username_no = "用户名可以使用";
+    var iframename = "@ViewBag.iframename";
+    iframename = iframename == '' ? "jerichotabiframe_0" : iframename;
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse,
+            resetForm: true
+        }
+        $('#manageadd').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+    })
+
+    function formverify(formData) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['username'] == "") {
+            document.manageadd.username.focus();
+            parent.basic_alert(js_useranme_empty);
+            return false;
+        }
+        //if (get['username'].match(/^[a-zA-Z]{1}[a-zA-Z0-9]{4,19}$/ig) == null) {
+        //    document.manageadd.username.focus();
+        //    alert(js_useranme_empty);
+        //    return false;
+        //}
+        if (get['password'] != "") {
+            if (get['password2'] == "" || get['password'] == "") {
+                document.manageadd.password.focus();
+                parent.basic_alert(js_password_empty);
+                return false;
+            }
+            if (get['password'].length < 6) {
+                document.manageadd.password.focus();
+                alert(js_password_empty);
+                return false;
+            }
+            if (get['password2'] != get['password']) {
+                document.manageadd.password.focus();
+                parent.basic_alert(js_password_error);
+                return false;
+            }
+        }        
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+    }
+
+    function checkuser() {
+        var usercode = document.getElementById("usercode").value;
+        if (usercode == "") {
+            return false;
+        }
+        var um = document.getElementById('usercodeerr');
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("UserCheck")",
+            data: "usercode=" + usercode,
+            success: function (date) {
+                if (date == "false") {
+                    um.innerHTML = "<font color=\"red\">" + username_yes + "</font>";
+                    $('#submitbotton').attr('disabled', 'true');
+                } else {
+                    um.innerHTML = "<font color=\"#1CB521\">" + username_no + "</font>";
+                    $('#submitbotton').attr('disabled', '');
+                }
+            }
+        });
+    }
+    function saveResponse(options) {
+        //parent.closeifram();
+        if (options == true) {
+            if (parent.frames[iframename]) {
+                parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+            } else {
+                window.location.reload();
+            }
+            parent.success_alert(js_add_ok);
+        } else {
+            parent.error_alert(js_add_no);
+        }
+        parent.onaletdoc()
+    }
+</script>
+<form name="manageadd" id="manageadd" method="post" action="@ViewBag.actionURL">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<!--查看已选择的类型-->
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">您现在所修改的管理员帐户为@(Model.usercode)</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tbody>
+                    <tr class="trstyle2">
+						<td class="trtitle01">用户名</td>
+						<td class="trtitle02">
+                            @{
+                                if (ViewBag.act == "add")
+                                {
+                                    <input type="text" onblur="checkuser();" class="infoInput" maxlength="20" size="50" id="usercode" name="usercode">
+                                    <span class="cautiontitle" id="usercodeerr">用户名长度不能小于5位，由英文和数据组成，首字符必须为英文字母</span>
+                                }
+                                else
+                                {
+                                    <input type="hidden" class="infoInput" value="@Model.usercode" maxlength="250" size="20" name="usercode"> @Model.usercode @:[最后一次登陆 @Model.lastlogindate &nbsp;登陆IP @Model.loginip]
+                                                    }
+                            }
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">密码</td>
+						<td class="trtitle02"><input type="password" class="infoInput" maxlength="30" size="25" name="password" autocomplete="off"> <span class="cautiontitle">如果密码不为空，则会修改为您输入的密码！密码长度不小于6位！ </span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">确认密码</td>
+						<td class="trtitle02"><input type="password" class="infoInput" maxlength="30" size="25" name="password2"></td>
+					</tr>			
+					<tr class="trstyle2">
+						<td class="trtitle01">管理员姓名</td>
+						<td class="trtitle02"><input type="text" class="infoInput" value="@Model.username" maxlength="40" size="20" name="username"></td>
+					</tr>
+                    <tr class="trstyle2">
+                        <td class="trtitle01">上传头像</td>
+                        <td class="trtitle02">
+                            <ul class="addpiclist">
+                                <li id="addsrlipic">
+                                    <a title="选择头像图片" onclick="javascript:parent.windowsdig('选择头像图片','iframe:@Url.Action("Index", "FileManage", new { getbyid = "addsrlipic", fileinputid = "userface", checkfrom = "picshow", filetype = "img", maxselect = 1 })&iframename='+self.frameElement.getAttribute('name'),'900px','480px','iframe')" href="#body">
+                                        <p><img id="addsrpic" src="@(Model.userface == null ? "/Areas/Master/Themes/login/avatar.jpg" : Model.userface)" width="100"></p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <input type="hidden" name="userface" id="userface" value="@(Model.userface == null?"/Areas/Master/Themes/login/avatar.jpg":Model.userface)" />
+                        </td>
+                    </tr>			
+					<tr class="trstyle2">
+						<td class="trtitle01">描述</td>
+						<td class="trtitle02"><textarea class="form-control" rows="5" cols="50" name="description">@Model.description</textarea></td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">所属权限组</td>
+						<td class="trtitle02">
+							<div class="col-xs-2 pl0">
+                                <select id="roleid" name="roleid" size="1" class="form-control">
+                                    @{
+                                        IEnumerable<sys_role> role = new sys_roleService().List(string.Empty);
+                                        foreach (var r in role)
+                                        {
+                                            <option value="@r.id" @(Model.roleid == r.id ? " selected=selected" : "")>@r.rolename</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"></td>
+					</tr>
+				</tbody></table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td id="right"><input type="submit" id="submitbotton" name="Submit" value="保存" class="btn btn-primary mr10" /></td>
+				<td id="left"><input type="button" name="cancel" onclick="javascript: parent.onaletdoc();" value="取消" class="btn btn-default" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

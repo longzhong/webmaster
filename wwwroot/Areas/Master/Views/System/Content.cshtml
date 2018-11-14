@@ -1,0 +1,113 @@
+﻿@using LONG.Models
+@{
+    ViewBag.Title = "Content";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+    string category = string.Empty;
+    List<sys_category> config = new sys_categoryService().SelectList(1, true);
+    foreach(var c in config){
+        category += c.id + ",";
+    }
+    category = category.Substring(0, category.Length - 1);
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        var w = $(window).width();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_save_ok = "恭喜！参数设置成功！";
+    var js_save_no = "抱歉：参数设置失败！";
+    var iframename = "";
+    $(document).ready(function () {
+        new CBPFWTabs(document.getElementById('tabs'));
+        var h = $(window).height();
+        @(new MvcHtmlString(new sys_configService().CheckConfig(category,"editor1")))
+        //$("#tabcontent").organicTabs({
+        //    "speed": 100,
+        //});
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse,
+            resetForm: false
+        }
+        $('#setting').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+    })
+    function formverify(formData) {
+        @(new MvcHtmlString(new sys_configService().CheckConfig(category,"editor2")))
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+    }
+    function saveResponse(options) {
+        //parent.closeifram();
+        if (options == true) {
+            parent.success_alert(js_save_ok);
+        } else {
+            parent.error_alert(js_save_no);
+        }
+    }
+</script>
+<form name="setting" id="setting" method="post" action="@Url.Action("Update")">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<!--查看已选择的类型-->
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下选项中修改系统相关参数</span></span>
+		</div>
+        <div id="tabs" class="tabs">
+            <nav>
+                <ul>
+                    @{
+                        List<sys_category> clist = new sys_categoryService().SelectList(1, true);
+                        int i = 1;
+                        int j = clist.Count();
+                        foreach (var cl in clist)
+                        {
+                            <li><a href="#section-@i">@cl.title</a></li>
+                            i++;
+                        }
+                    }
+                </ul>
+            </nav>
+            <div class="content">
+                @{
+                    int k = 1;
+                    foreach (var cl in clist)
+                    {
+                        <section id="section-@k">            
+                                <table class="formtable">
+                                    @(new MvcHtmlString(new sys_configService().ShowConfig(cl.id.ToString())))
+                                </table>
+                        </section>
+                        k++;
+                    }
+                }
+            </div>
+        </div>                    
+    </div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td id="center"><input type="submit" name="Submit" value="确认修改" class="btn btn-primary" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

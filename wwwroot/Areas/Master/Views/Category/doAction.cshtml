@@ -1,0 +1,341 @@
+﻿@using LONG.Models
+@using LONG.Web
+@model LONG.Models.sys_model_category
+@{
+    ViewBag.Title = "doAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var type_add_upid = "上级分类";
+    var js_noselect_empty = "模型未选择";
+    var js_typename_empty = "分类名称不能为空，请输入长度不能大于20的任意字符";
+    var js_dirname_empty = "生成文件夹名称为空或输入错误，请输入长度不能小于4和大于20的英文数字或下线划字符";
+    var js_typeurl_empty = "跳转地址未填写或填写错误，链接地址前请务必加上http://";
+    var js_type_shift_typeselect_err = "抱歉！分类选择错误，请确保不要选择同一分类";
+    var js_type_edit_ok = "恭喜！分类修改成功！";
+    var js_type_edit_no = "抱歉！分类修改失败！";
+    var js_isline_empty = "跳转关联分类ID未填写或填写错误，请返回重新填写";
+    var subjectmanage_js_pagemax_empty = "每页显示数量填写错误，请填写大于0的整数值";
+    var iframename = "@ViewBag.iframename";
+    $(document).ready(function () {
+        editsimpleshow_height("#contents");
+        var h = $(window).height();
+        topingyin("title", "dirname");
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse
+        }
+        $('#typeedit').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+        parent.scrolclear();
+    })
+
+    function formverify(formData) {
+        for (var i = 0; i < formData.length; i++) {
+            if (formData[i].name == "contents") {
+                formData[i].value = tinyMCE.get('contents').getContent();
+            }
+        }
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+
+        if (get['modelid'] == '0') {
+            document.typeedit.modelid.focus();
+            parent.basic_alert(js_noselect_empty);
+            return false;
+        }
+
+        if (get['title'] == '') {
+            document.typeedit.title.focus();
+            parent.basic_alert(js_typename_empty);
+            return false;
+        }
+
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+    }
+    function saveResponse(options) {
+        //parent.closeifram();
+        if (options == true) {
+            parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+            parent.success_alert(js_type_edit_ok);
+        } else {
+            parent.error_alert(js_type_edit_no);
+        }
+        //parent.scrolopen();
+        parent.onaletdoc()
+    }
+    function changepath() {
+        var parentid = $("#parentid").val();
+        var basepath = "@Utility.GetConfig("file_htmldir")";
+        $.getJSON("@Url.Action("GetParentDirName","ModelCategory")?parentid=" + parentid, function (data) {
+            if (data != "") {
+                $('#path').val(basepath + data + "/" + $('#dirname').val() + "/");
+            }else{
+                $('#path').val(basepath + $('#dirname').val() + "/");
+            }
+        });
+    }
+    function changeattr(value){
+        if(value == 3){
+            $('#typeurldiv').removeClass().addClass('trstyle2 show');
+        }else{
+            $('#typeurldiv').removeClass().addClass('trstyle2 hidden');
+        }
+        if(value == 1){
+            $('#defaultnamediv').removeClass().addClass('trstyle2 show');
+        }else{
+            $('#defaultnamediv').removeClass().addClass('trstyle2 hidden');
+        }
+    }
+</script>
+<form name="typeedit" id="typeedit" method="post" action="@ViewBag.actionURL">
+<input type="hidden" name="issubject" value="false" />
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中填写分类属性</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">	
+                    <tr class="trstyle2">
+						<td width="15%" class="trtitle01">所属模型</td>
+						<td width="85%" class="trtitle02">
+							<select id="modelid" name="modelid" size="1">
+								<option value="">请选择模型分类</option>
+								@(new MvcHtmlString(new sys_modelService().OptionList(Model.modelid == null ? 0 : Model.modelid)))
+							</select>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle011">名称</td>
+						<td width="85%" class="trtitle02">
+							<input type="text" id="title" name="title" value="@Model.title" size="60" maxlength="100" class="infoInput"/>
+							<span class="cautiontitle">请输入长度不能大于80的任意字符</span>
+						</td>
+					</tr>
+                    <tr id="isdirnamediv" class="trstyle2">
+						<td width="15%" class="trtitle011">文件夹名称</td>
+						<td width="85%" class="trtitle02">
+							<input type="text" value="@Model.dirname" oninput="changepath()" onpropertychange="changepath()" onblur="checktypelngname('dirname',this.value,/^[\w-]+$/ig,'@Url.Action("CheckDirname", new { whoid = ViewBag.act == "act" ? 0 : Model.id, modelid  = ViewBag.modelid })','dirnameerr','文件夹未存在，可以使用','文件夹已存在，请换个文件夹名称','typeaddsubmitbotton');" class="infoInput" maxlength="20" size="20" name="dirname" id="dirname"> <input type="checkbox" name="lockdir" id="lockdir" value="true"@(Model.lockdir == true ? " checked=checked" : "") /> 锁定名称
+							<span id="dirnameerr" class="cautiontitle">文件夹不可重复，请输入长度不能小于4和大于15的英文数字或下线划字符</span>
+						</td>
+					</tr>			
+                    <tr class="trstyle2">
+						<td width="15%" class="trtitle01">上级分类</td>
+						<td width="85%" class="trtitle02">
+							<select id="parentid" name="parentid" size="1" onchange="changepath()">
+								<option value="0">请选择关联分类</option>
+								@(new MvcHtmlString(new sys_model_categoryService().OptionList(Model.parentid == null ? null : Model.parentid.ToString(), ViewBag.modelid, 0, true)))
+							</select>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01">代表图片</td>
+						<td width="85%" class="trtitle02">
+							<ul class="addpiclist">
+								<li id="addsrlipic"><a title="选择图片" onclick="javascript:parent.windowsdig('选择图片','iframe:@Url.Action("Index", "FileManage", new { getbyid = "addsrlipic", fileinputid = "icon", checkfrom = "picshow", filetype = "img", maxselect = 1})&iframename='+self.frameElement.getAttribute('name'),'900px','480px','iframe')" href="#body"><p><img id="addsrcpic" src="@(Model.icon == null?"/areas/master/themes/images/pic.png":Model.icon)" height="100"></p></a></li>
+							</ul>
+							<input type="hidden" name="icon" id="icon" value="@Model.icon" size="50" maxlength="50" class="infoInput"/>
+						</td>
+					</tr>
+					<tr class="trstyle2 ">
+						<td width="15%" class="trtitle01">介绍</td>
+						<td width="85%" class="trtitle02">
+							<textarea name="contents" id="contents" cols="50" rows="5" class="smallInput" style="width:98%;height:70px;">@Model.contents</textarea>
+						</td>
+					</tr>
+					<tr class="trstyle2 ">
+						<td class="trtitle03" colspan="2">SEO优化相关设置</td>
+					</tr>
+					<tr class="trstyle2 ">
+						<td class="trtitle01">自定义TITLE</td>
+						<td class="trtitle02"><input type="text" name="headtitle" id="headtitle" value="@Model.headtitle" maxlength="100" class="infoInput" style="width:98%;"/></td>
+					</tr>
+					<tr class="trstyle2 ">
+						<td class="trtitle01"></td>
+						<td class="trtitle02">
+							<a class="keyselect" href="#body" onclick="javascript:parent.windowsdig('选择全网优化词分组','iframe:@Url.Action("SelectList", "KeylinkType")?inputtext=keywords&checkfrom=input&iframename='+self.frameElement.getAttribute('name'),'850px','450px','iframe');">选择全网优化词分组</a>
+							<a class="keyselect" href="#body" onclick="javascript:parent.windowsdig('选择Keywords优化词','iframe:@Url.Action("SelectList", "Keylink")?inputtext=keywords&checkfrom=input&iframename='+self.frameElement.getAttribute('name'),'650px','380px','iframe');">选择Keywords优化词</a>
+						</td>
+					</tr>
+					<tr class="trstyle2 ">
+						<td class="trtitle01">自定义Keywords</td>
+						<td class="trtitle02">
+							<input type="text" name="keywords" id="keywords" value="@Model.keywords" maxlength="100" class="infoInput" style="width:98%;"/>
+						</td>
+					</tr>
+					<tr class="trstyle2 ">
+						<td class="trtitle01">自定义Description</td>
+						<td class="trtitle02">
+							<textarea name="description" id="description" style="width:98%;height:50px;" class="smallInput">@Model.description</textarea>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle03" colspan="2">显示样式及其它属性</td>
+					</tr>
+                    <tr class="trstyle2@(Model.pageclass==0?" displaynone":"")">
+						<td width="15%" class="trtitle01">页面样式</td>
+						<td width="85%" class="trtitle02">
+							<select id="attribute" name="attribute" size="1" onchange="changeattr(this.value)">
+								<option value="2"@(ViewBag.act=="add"||Model.attribute==2?" selected":"")>信息列表（以翻页生成）</option>
+								<option value="1"@(Model.attribute==1?" selected":"")>频道主页（首页会以index或者default生成）</option>
+								<option value="3"@(Model.attribute==3?" selected":"")>外部链接</option>
+                                @{
+                                    if (ViewBag.act == "addsingel" || Model.attribute == 0)
+                                    {
+                                    <option value="0" selected>单网页</option>
+                                    }else{
+                                    <option value="0">单网页</option>
+                                    }
+                                }
+							</select>
+						</td>
+					</tr>
+                    <tr id="typeurldiv" class="trstyle2 displaynone">
+						<td width="15%" class="trtitle01">外部链接地址</td>
+						<td width="85%" class="trtitle02">
+							<input type="text" class="infoInput" value="@(Model.linkurl == null ? "http://" : Model.linkurl)" maxlength="150" size="60" name="url">
+							<span class="cautiontitle">外部地址前请务必加上“http://”</span>
+						</td>
+					</tr>
+                    <tr id="pageclass" class="trstyle2">
+						<td width="15%" class="trtitle01">页面类型</td>
+						<td width="85%" class="trtitle02">
+							<input type="radio" onclick="showdiv(1, '@(ViewBag.act == "addsingel" || Model.modelid == 5 ? "" : "#liststylediv|")#readstylediv|#fileexdiv|@(Model.attribute == 1 ? "#defaultnamediv|" : "")#pathdiv', '0|1', 'trstyle2 displaynone|trstyle2 displaytrue', 1, 1)" name="pageclass" value="1"@(ViewBag.act == "add" || ViewBag.act == "addsingel" || Model.pageclass == 1 ? " checked" : "")> 静态页面&nbsp;
+							<input type="radio" onclick="showdiv(0, '@(ViewBag.act == "addsingel" || Model.modelid == 5 ? "" : "#liststylediv|")#readstylediv|#fileexdiv|@(Model.attribute == 1 ? "#defaultnamediv|" : "")#pathdiv', '0|1', 'trstyle2 displaynone|trstyle2 displaytrue', 1, 1)" name="pageclass" value="0"@(Model.pageclass == 0 ? " checked" : "")> 动态页面
+                            <span class="cautiontitle">如启用动态类型，则该分类不会生成HTML文件</span>
+						</td>
+					</tr>	
+					<tr id="pathdiv" class="trstyle2@(Model.pageclass == 0 ? " displaynone" : "")">
+						<td width="15%" class="trtitle011">生成指定目录</td>
+						<td width="85%" class="trtitle02">
+                            <input type="text" id="path" name="path" value="@(Model.path == null ? Utility.GetConfig("file_htmldir") : Model.path)" size="40" maxlength="100" class="infoInput" readonly/>
+						</td>
+					</tr>
+                    <tr id="indextemplatediv" class="trstyle2@(Model.attribute == 0 ? " displaynone" : "")">
+						<td width="15%" class="trtitle01">频道主页模板</td>
+						<td width="85%" class="trtitle02">
+							<input type="text" class="infoInput" value="@(Model.indextemplate == null ? "article_index" : Model.indextemplate)" maxlength="80" size="20" id="indextemplate" name="indextemplate">
+							<a onclick="javascript:parent.windowsdig('选择模板','iframe:@Url.Action("SelectList", "Template", new { searchdir = "article" })&inputtext=indextemplate&checkfrom=input&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),'750px','400px','iframe');" href="#body" class="filecheck">选择模板</a>
+							<span class="cautiontitle">请输入模板文件名(无扩展名)，例如：news.html 即输入news</span>
+						</td>
+					</tr>
+                    <tr id="listtemplatediv" class="trstyle2@(ViewBag.act == "addsingel" || Model.attribute == 0 ? " displaynone" : "")">
+						<td width="15%" class="trtitle01">列表模板</td>
+						<td width="85%" class="trtitle02">
+							<input type="text" class="infoInput" value="@(Model.listtemplate == null ? "article_list" : Model.listtemplate)" maxlength="80" size="20" id="listtemplate" name="listtemplate">
+							<a onclick="javascript:parent.windowsdig('选择模板','iframe:@Url.Action("SelectList", "Template", new { searchdir = "article" })&inputtext=listtemplate&checkfrom=input&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),'750px','400px','iframe');" href="#body" class="filecheck">选择模板</a>
+							<span class="cautiontitle">请输入模板文件名(无扩展名)，例如：news.html 即输入news</span>
+						</td>
+					</tr>
+                    <tr id="readtemplatediv" class="trstyle2">
+						<td width="15%" class="trtitle01">阅读模板</td>
+						<td width="85%" class="trtitle02">
+							<input type="text" class="infoInput" value="@(Model.readtemplate == null ? "article_read" : Model.readtemplate)" maxlength="80" size="20" id="readtemplate" name="readtemplate">
+							<a onclick="javascript:parent.windowsdig('选择模板','iframe:@Url.Action("SelectList", "Template", new { searchdir = "article" })&inputtext=readtemplate&checkfrom=input&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),'750px','400px','iframe');" href="#body" class="filecheck">选择模板</a>
+							<span class="cautiontitle">请输入模板文件名(无扩展名)，例如：news.html 即输入news</span>
+						</td>
+					</tr>                    
+                    <tr id="fileexdiv" class="trstyle2@(Model.pageclass == 0 ? " displaynone" : "")">
+                        <td class="trtitle01">生成格式设置</td>
+                        <td class="trtitle02">
+                            <input type="text" name="fileex" size="20" id="fileex" value="@Utility.GetConfig("file_fileex")" maxlength="50" class="infoInput" readonly>
+                            <span class="cautiontitle">可在系统设置中修改此属性</span>
+                        </td>
+                    </tr>
+                    <tr id="defaultnamediv" class="trstyle2@(Model.attribute != 1 ? " displaynone" : "")">
+                        <td class="trtitle01">频道首页生成文件名</td>
+                        <td class="trtitle02">
+                            <input type="text" name="defaultname" size="20" id="defaultname" value="@Utility.GetConfig("entrance_file")" maxlength="50" class="infoInput" readonly>
+                            <span class="cautiontitle">可在系统设置中修改此属性</span>
+                        </td>
+                    </tr>
+                    <tr id="liststylediv" class="trstyle2@(ViewBag.act == "addsingel" || Model.pageclass == 0 || Model.attribute == 0 ? " displaynone" : "")">
+						<td width="15%" class="trtitle01">列表URL访问样式</td>
+						<td width="85%" class="trtitle02">
+							<select id="liststyle" name="liststyle" size="1">
+																<option value="{cid}_list_{pageid}"@(Model.liststyle == "{cid}_list" ? " selected" : "")>dirname/1000_list</option>
+																<option value="{dirname}_list_{pageid}"@(ViewBag.act == "add" || Model.liststyle == "{dirname}_list" ? " selected" : "")>dirname/dirname_list</option>
+															</select>
+						</td>
+					</tr>
+                    <tr id="readstylediv" class="trstyle2@(Model.pageclass == 0 ? " displaynone" : "")">
+						<td width="15%" class="trtitle01">详细内容URL样式</td>
+						<td width="85%" class="trtitle02">
+							<select id="readstyle" name="readstyle" size="1">
+																<option value="{did}"@(Model.readstyle == "{did}" ? " selected" : "")>dirname/1000</option>
+																<option value="{filename}"@(ViewBag.act == "add" || Model.readstyle == "{filename}" ? " selected" : "")>dirname/filename</option>
+															</select>
+						</td>
+					</tr>
+					<tr id="showtypediv" class="trstyle2@(ViewBag.act == "addsingel" || Model.attribute == 0 ? " displaynone" : "")">
+						<td width="15%" class="trtitle01">列表类型</td>
+						<td width="85%" class="trtitle02">
+							<select id="showtype" name="showtype">
+							<option value="1"@(Model.showtype == 1 ? " selected=selected" : "")>仅标题</option>
+							<option value="2"@(Model.showtype == 2 ? " selected=selected" : "")>标题+摘要</option>
+							<option value="3"@(Model.showtype == 3 ? " selected=selected" : "")>标题+缩略图</option>
+							<option value="4"@(Model.showtype == 4 ? " selected=selected" : "")>标题+缩略图+简介</option>
+							<option value="5"@(Model.showtype == 5 ? " selected=selected" : "")>缩略图+标题+简介</option>
+                            @{
+                                if (ViewBag.act == "addsingel" || Model.attribute == 0)
+                                {
+                                    <option value="0" selected>单网页</option>
+                                }
+                            }
+							</select>
+						</td>
+					</tr>
+					<tr class="trstyle2 " id="pagemaxdiv3">
+						<td width="15%" class="trtitle01">排序方式</td>
+						<td width="85%" class="trtitle02">
+							<input type="radio" value="1" name="ordertype"@(Model.ordertype == 1 || ViewBag.act == "add" || ViewBag.act == "addsingel" ? " checked" : "")/> 按ID排序&nbsp;
+							<input type="radio" value="2" name="ordertype"@(Model.ordertype == 2 ? " checked" : "")/> 按发布时间排序</td>
+					</tr>
+					<tr class="trstyle2 displaynone">
+						<td class="trtitle03" colspan="2">3G-WAP显示设置</td>
+					</tr>
+					<tr class="trstyle2 displaynone">
+						<td width="15%" class="trtitle01">3G-WAP显示</td>
+						<td width="85%" class="trtitle02">
+							<input type="radio" value="true" name="iswap"@(Model.iswap == true ? " checked" : "")/> 启用&nbsp;
+							<input type="radio" value="false" name="iswap"@(Model.iswap == false || ViewBag.act == "add" || ViewBag.act=="addsingel" ? " checked":"")/> 关闭<span class="cautiontitle">启用WAP后，可以通过手机等3G设备访问该内容</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td id="right"><input type="submit" id="typeaddsubmitbotton" name="Submit" value="保存" class="buttonface" /></td>
+				<td id="left" class="padding-left5"><input type="button" name="cancel" onClick="javascript: closewindow();" value="取消" class="buttonface" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

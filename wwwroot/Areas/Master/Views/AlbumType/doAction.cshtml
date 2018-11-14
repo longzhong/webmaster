@@ -1,0 +1,112 @@
+﻿@model LONG.Models.sys_album_type
+@using LONG.Models
+@{
+    ViewBag.Title = "doAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_add_ok = "恭喜！相册添加成功";
+    var js_add_no = "抱歉！相册添加失败，请检查您的输入项是否正确";
+    var iframename = "@ViewBag.iframename";
+    iframename = iframename == '' ? "jerichotabiframe_0" : iframename;
+    $(document).ready(function () {
+        var h = '484';
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+
+            beforeSubmit: formverify,
+
+            success: saveResponse,
+            resetForm: true
+        }
+        $('#manageadd').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+    })
+
+    function formverify(formData) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['title'] == "") {
+            document.manageadd.title.focus();
+            parent.basic_alert(js_useranme_empty);
+            return false;
+        }
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+    }
+
+    function saveResponse(options) {
+        //parent.closeifram();
+        if (options == true) {
+            parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+            parent.success_alert(js_add_ok);
+        } else {
+            parent.error_alert(js_add_no);
+        }
+        parent.onaletdoc()
+    }
+</script>
+<form name="manageadd" id="manageadd" method="post" action="@ViewBag.actionURL">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<!--查看已选择的类型-->
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">您现在所修改的管理员帐户为<u>@Model.title</u></span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tbody>
+                    <tr class="trstyle2">
+						<td class="trtitle01">相册名称</td>
+						<td class="trtitle02">
+                        <input type="text" class="infoInput" maxlength="20" size="50" id="title" name="title" value="@Model.title">
+						</td>
+					</tr>		
+					<tr class="trstyle2">
+						<td class="trtitle01">状态设置</td>
+						<td style="line-height: 200%" class="trtitle02">
+                            <input type="checkbox" name="isenable" value="true"@(ViewBag.act == "add" || Model.isenable == true ? " checked=checked" : "")> 启用					
+                        </td>
+					</tr>			
+					<tr class="trstyle2">
+						<td class="trtitle01">备注说明</td>
+						<td class="trtitle02"><textarea style="width: 98%; height: 70px;" class="smallInput" rows="5" cols="50" name="description">@Model.description</textarea></td>
+					</tr>
+					<tr>
+						<td colspan="2"></td>
+					</tr>
+				</tbody></table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td id="right"><input type="submit" id="submitbotton" name="Submit" value="保存" class="buttonface" /></td>
+				<td id="left" class="padding-left5"><input type="button" name="cancel" onClick="javascript: parent.onaletdoc();" value="取消" class="buttonface" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

@@ -1,0 +1,130 @@
+﻿.hotlink .quick {
+    height: 50px;
+    text-align: center;
+    width: 50px;
+    display:block;
+    background: url("/areas/master/themes/images/aluminium.png") no-repeat scroll 0 0;
+}
+.hotlink .quick img {
+    margin: 16px;
+}
+.hotlink .label {
+    color: #666;
+    white-space: nowrap;
+    line-height:35px;
+}
+button.bigbutton {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: url("/areas/master/themes/images/buttonBg.png") repeat-x scroll 0 -100px #fff;
+    border-color: #bcd #abc #9ab;
+    border-image: none;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+    color: #456;
+    cursor: pointer;
+    height: auto;
+    overflow: visible;
+    padding: 4px 8px;
+    text-align: center;
+    transition: box-shadow 0.2s linear 0s;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+button.bigbutton:hover {
+    background-position: 0 -130px;
+    border-color: #ccaa22;
+    color: #775511;
+}
+button.bigbutton img {
+    margin: 0 3px 2px -3px;
+    vertical-align: middle;
+}
+.card-left {
+    float: left;
+    width: 48%;
+    height: 180px;
+}
+.card-right {
+    float: right;
+    width: 48%;
+    height: 180px;
+}
+.card {
+    background-color: #fff;
+    margin-bottom: 5px;
+}
+.card-list {
+    height: 240px;
+}
+.z-legend {
+    height: 30px;
+    line-height: 25px;
+    margin: 3px 0;
+    padding-left: 10px;
+    display:block;
+    background: url("/areas/master/themes/images/legend_bg.png") no-repeat scroll 0 0;
+}
+
+.searchbar {
+    height: 58px;
+    text-align: left;
+    width: 462px;
+    float:left;
+    display:block;
+    background: url("/areas/master/themes/images/searchBar_bg.gif") no-repeat scroll 0 0;
+}
+#searchkey {
+    background: none repeat scroll 0 0 transparent;
+    border: 0 none;
+    font-size: 14px;
+    height: 30px;
+    margin: 14px 0 0 14px;
+    padding: 0 0 0 40px;
+    width: 313px;
+}
+#searchbtn {
+    background: none repeat scroll 0 0 transparent;
+    border: 0 none;
+    color: #506624;
+    font-size: 14px;
+    font-weight: bold;
+    height: 34px;
+    margin: 12px 0 0;
+    padding: 0;
+    width: 82px;
+    cursor:pointer
+}
+.section_content {
+    padding: 5px 10px;
+}
+.nslit_s1 li {
+    background: url("/areas/master/themes/index/Blue/Img/dot2.gif") no-repeat scroll left 13px rgba(0, 0, 0, 0);
+    border-bottom: 1px dashed #bccfeb;
+    height: 29px;
+    line-height: 29px;
+    overflow: hidden;
+    padding-left: 10px;
+    color: #3b5f96;
+}
+.nslit_s1 li a {
+}
+.nslit_s1 li a:hover {
+    color: #da1717;
+    text-decoration: none;
+}
+.nslit_s1 li .time {
+    color: #7d9ec9;
+    font-family: Arial;
+    font-size: 11px;
+}
+.fltL {
+    float: left;
+}
+.fltR {
+    float: right;
+}

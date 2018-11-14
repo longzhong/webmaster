@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html class="wide wow-animation scrollTo smoothscroll" lang="en">
+  <head>
+    <!-- Site Title-->
+    <title>Products - YIPAK</title>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="keywords" content="intense web design multipurpose template html">
+    <meta name="date" content="Dec 26">
+    <link rel="icon" href="/Templates/default/cn/images/favicon.ico" type="image/x-icon">
+    <!-- Stylesheets-->
+    <link rel="stylesheet" href="/Templates/default/cn/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/Templates/default/cn/css/yipak.css">
+    <!--[if lt IE 10]>
+    <div style="background: #212121; padding: 10px 0; box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3); clear: both; text-align:center; position: relative; z-index:1;"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="images/ie8-panel/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
+    <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <!-- Page-->
+    <div class="page text-center">
+       {lw:include file="public/header.html"}
+      <!-- Classic Breadcrumbs-->
+      <section style="background: url(/Templates/default/cn/images/intense/banner_products.jpg) center top no-repeat;" class="yipak_banner">
+        <div class="shell">
+          <div class="range range-lg-middle cell-xs-6 cell-md-12">
+            <div class="small">
+              <ul class="list-inline list-inline-dashed p">
+                <li><a href="/">Home</a></li> » 
+                {lw:global.navigation}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Page Content-->
+      <main class="page-content section-10">
+        <div class="shell">
+          <div class="range">
+            <div class="cell-md-9 cell-md-push-1">
+              <div class="range">
+              	{lw:loop}
+                <div class="cell-xs-6 cell-sm-6 cell-lg-4 section-bottom-34">
+                                <!-- Product-->
+                                <div class="product product-grid offset-top-0">
+                                  <!-- Product Image-->
+                                  <div class="product-image"><a href="/{field.linkurl}" target="_blank">{if val="{field.imgurl}" mod="notempty"}<img class="img-responsive product-image-area" src="{field.imgurl}" alt="{field.title}" width="275" height="275">{/if}</a>
+                                    <!-- Product Thumnails-->
+                                    <!-- <ul class="product-thumbnails">
+                                    	{lw:albumlist}
+	                                	<li {if key="{i}" val="1" mod="equals"}class="active"{/if}><img class="img-responsive" src="{field.imgurl}" alt="{field.title}" width="270" height="360"></li>
+										{/lw:albumlist}
+                                    </ul> -->
+                                    
+                                  </div>
+                                  <!-- Product Title-->
+                                  <h6 class="product-title offset-top-0"><a href="/{field.linkurl}" target="_blank">{field.title}</a></h6>
+                                  <div class="product-block-hover">
+                                    <!-- Product Add To cart--><a class="btn btn-sm btn-primary btn-icon btn-icon-left product-btn offset-top-20" href="/{field.linkurl}" target="_blank">Read More</a>
+                                  </div>
+                                </div>
+                </div>
+                {/lw:loop}
+              </div>
+              <div class="offset-top-66">
+              	{lw:page max="9"}
+                <!-- Bootstrap Pagination-->
+                <nav>
+                  <ul class="pagination pagination-sm">
+                    <li><a href="/{field.index}" aria-label="First"><span class="mdi mdi-chevron-double-left" aria-hidden="true"></span>FIRST</a></li>
+                    <li><a href="/{field.front}" aria-label="Prev"><span class="mdi mdi-chevron-left" aria-hidden="true"></span>PREV</a></li>
+                    
+                    <li><a href="/{field.next}" aria-label="Next">NEXT<span class="mdi mdi-chevron-right" aria-hidden="true"></span></a></li>
+                    <li><a href="/{field.last}" aria-label="Last">LAST<span class="mdi mdi-chevron-double-right" aria-hidden="true"></span></a></li>
+                  </ul>
+                </nav>
+                {/lw:page}
+              </div>
+            </div>
+            <div class="cell-md-4 cell-lg-3 cell-md-pull-1 offset-top-66 offset-md-top-0">
+              {lw:include file="public/product-left.html"}
+            </div>
+          </div>
+        </div>
+      </main>
+      <!--Page Footers-->
+     {lw:include file="public/footer.html"}
+    </div>
+    <!-- JavaScript-->
+    <script src="/Templates/default/cn/js/core.min.js"></script>
+    <script src="/Templates/default/cn/js/script.js"></script>
+	  </body>
+</html>

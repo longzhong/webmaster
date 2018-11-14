@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using LONG.Core;
+using LONG.Data;
+using LONG.Model;
+
+namespace LONG.BLL
+{
+    public class BLL{TableName} : BLLBase<{TableName}>
+    {
+
+    }
+}

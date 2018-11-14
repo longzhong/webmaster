@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<title>Loading</title>
+		<link href="/areas/master/themes/css/baselist.css" rel="stylesheet" type="text/css" />
+		<link href="/areas/master/themes/css/all.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="/areas/master/scripts/jquery.js"></script>
+		<script type="text/javascript" language="JavaScript">
+			var createmain_mess_title = "当前要生成的栏目总数为：";
+			var createmain_mess_title2 = "个，正在生成第 <u><span id=\"loadnum\">0</span></u> 个";
+			var createmain_mess_title3 = " 运行时长：";
+			var createmain_mess_title4 = "秒";
+			var createmain_creat_yes = "生成成功，路径为 ";
+			var createmain_creat_no = "生成失败，路径为 ";
+			var createmain_creat_no_c = "目录创建失败";
+			var createmain_creat_no_w = "生成目录无读写权限";
+			var createmain_creat_no_t = "无法找到模板";
+			var createmain_creat_bottonname = "正在生成中";
+			var botton_close = "关闭窗口";
+			var createmain_creat_title = "生成状态";
+			var err_createmain_err_title = "<table border=\"0\" width=\"100%\"><tr><td id=\"center\" class=\"strong colorgorning2\" style=\"padding:10px\">系统已禁用静态页面生成，需要在“网站参数设置”中开启静态生成</td></tr></table>";
+			var createmain_js_add_ok = "恭喜！生成成功！";
+			var is_html = 1;
+			$(document).ready(function() {
+				var h = $(window).height();
+				$('#mainwindowhidden').css({height: h - 39});
+				if (is_html == 1) {
+					get_load();
+				} else {
+					$('#filecheckmanger').empty();
+					$('#filecheckmanger').append(err_createmain_err_title);
+				}
+			});
+
+			function get_load() {
+				var loadurl = "@Url.Action("CreateCategoryBegin","Html")";
+				$('#coasecreat').attr('disabled', 'true');
+
+				$('#coasecreat').val(createmain_creat_bottonname);
+				$('#loadingline').css("width", 0);
+				$.ajax({
+					type: "POST",
+					url: loadurl,
+					dataType: 'json',
+					data: "categorylist=@ViewBag.categorylist",
+				    success: function (date) {
+				        //alert(JSON.stringify(date));
+						$('#filecheckmanger').remove();
+
+						$('#filecheckloading').removeClass().addClass('formdiv displaytrue');
+						var newHTML = createmain_mess_title + '<b><u> ' + date.num + ' </u></b>' + createmain_mess_title2;
+						$("#loadtext").append(newHTML);
+
+						if (date.num > 0) {
+						    var countmax = 500 / date.num;
+						    //alert(countmax);
+						    typeload(date.typelist, countmax, 1);
+						} else {
+						    $("#htmltext").append(createmain_js_add_ok);
+							$('#coasecreat').val(botton_close);
+							$('#coasecreat').attr('disabled', '');
+						}
+					}
+				});
+
+				$(this).ajaxStop(function() {
+				    $("#htmltext").append("<br>" + createmain_js_add_ok);
+					$('#coasecreat').val(botton_close);
+					$('#coasecreat').attr('disabled', '');
+				});
+			}
+
+		    function typeload(typelist, countmax, forid) {
+		        var typeArray;
+		        var typesid;
+		        var flag = false;
+		        if (typelist.indexOf(',') > 0) {
+		            var typeArray = typelist.split(',');
+		            if (!typeArray[0]) {
+		                return false;
+		            } else {
+		                typesid = typeArray[0]
+		            }
+		        } else {
+		            typesid = typelist;
+		            flag = true;
+		        }
+				
+				var loadurl = "@Url.Action("CreateCategory","Html")";
+		        var typeid = typesid;
+				$.ajax({
+					type: "POST",
+					url: loadurl,
+					data: "modelid=@ViewBag.modelid&category=" + typeid + "&creattype=@ViewBag.creattype&pnumber=@ViewBag.pnumber",
+					success: function(date) {
+					    var str = '<b><span class="colorthree">' + date.filename + '</span></b> 生成成功，路径为' + date.filepath;
+					    $("#htmltext").empty().append(str);
+					    $("#loadnum").empty().append(forid);
+					    var width = forid * countmax;
+					    //alert(date.filename);
+					    $('#loadingline').css("width", width);
+					    if (flag == false) {
+					        typeArray = typeArray.splice(1);
+					        forid++;
+					        var nowtypelist = typeArray.join(',');
+					        typeload(nowtypelist, countmax, forid);
+					    }
+					}
+				});
+			}
+
+			function loadclose() {
+				parent.closeifram();
+			}
+		</script>
+	</head>
+
+	<body>
+		<div class="centerrightwindow">
+			<div id="mainwindowhidden">
+				<div class="suggestion">
+					<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="padding-left5 colorgorningage">页面正在生成中，请耐心等待...</span></span>
+				</div>
+				<div class="sugtitle-line"></div>
+				<div class="formdiv" id="filecheckmanger">
+					<table border="0" width="100%">
+						<tr>
+							<td id="center" style="padding:25px;"><img alt="" src="templates/images/loading_02.gif" /></td>
+						</tr>
+						<tr>
+							<td id="center" class="strong colorgorning2" style="padding:0px">操作完毕后系统将自动关闭此提示窗口！</td>
+						</tr>
+					</table>
+				</div>
+				<div class="formdiv displaynone" id="filecheckloading">
+					<table border="0" width="100%">
+						<tr>
+							<td id="loadtext" style="padding-top:10px;" class="colorgorning2 center lineheight160"></td>
+						</tr>
+						<tr>
+							<td width="100%" style="padding-top:10px;" class="center">
+								<div class="loadingtable" id="loadingtable">
+									<div class="loadingline" id="loadingline"></div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td id="htmltext" style="padding-top:5px;" class="colorgorningage center lineheight160"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="downbotton">
+				<div id="subbotton">
+					<table border="0" width="100%">
+						<tr id="bottonsubmit">
+							<td id="center"><input type="button" name="cancel" id="coasecreat" onClick="javascript:loadclose();" value="关闭窗口" class="buttonface"/></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

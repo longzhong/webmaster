@@ -1,0 +1,20 @@
+*{padding:0;margin:0;}
+html{overflow-y:hidden}
+body {height: 100%; width:100%;background-color:#f5f5f5;overflow: hidden;font:9pt Arial,sans-serif;margin:0;padding:0;overflow:hidden;}
+tr, td, img{border-width:0;margin:0;padding:0;float:none;}
+form{margin:0;padding:0;}
+table{border-collapse:collapse;}
+.clear{clear:both;}
+input, textarea ,select{font-size:12px;padding:2px;}
+.login-div{width:778px;height:389px;background:url('../images/login/login-form.png') no-repeat bottom center;margin:0 auto;padding:0px; margin-top:180px; position:relative;}
+.login-div .logo{ position:absolute;top:20px;left:170px;width:338px;height:62px;text-indent:-9999px;background:url('../images/login/logo.png') no-repeat bottom center;}
+.login-div .loginform{ position:absolute; top:110px; left:420px; width:260px; color:#fff; overflow:hidden;}
+.login-div .loginform dl{float:left;width:100%;}
+.login-div .loginform dl dt,.login-div .loginform dl dd{float:left;width:100%;}
+.login-div .loginform dl dt{height:50px;line-height:50px; background:url(../images/login/login-title.png) no-repeat 0 10px; text-indent:-999px;}
+.login-div .loginform dl dt small{font-family:'Arial';font-size:16px;margin-left:10px;}
+.login-form-center{padding-left:10px;width:300px;text-align:left;overflow: hidden;}
+table td {line-height:30px;font-size: 14px;color: #fff;}
+table td img {margin:5px 0;}
+.infoInput{font-size:9pt;height:18px; font-family:Arial; border:1px solid #fff; margin:5px 0;}
+.buttonface{background:url(../images/login/login-btn.png) no-repeat; float:left; font-size:14px;padding:0px;margin:0px;width:105px;height:39px;border:0px;cursor:pointer;text-indent:-9999px}

@@ -1,0 +1,171 @@
+﻿@using LONG.Models
+@using LONG.Web
+@model LONG.Models.sys_keylink_type
+@{
+    ViewBag.Title = "doAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_keytypename_empty = "优化词分组名称填写错误或为空，请返回重新填写";
+    var js_keyworklist_empty = "Keywords填写错误或为空，请返回重新填写";
+    var js_description_empty = "Description填写错误或为空，请返回重新填写";
+    var js_noselect_empty = "未选择";
+    var doc_add_tid = "所属分类";
+    var js_add_ok = "恭喜！优化词添加成功！";
+    var js_add_no = "抱歉！优化词添加失败！";
+    var refalse = "1";
+    var iframename = "@ViewBag.iframename";
+    iframename = iframename == '' ? "jerichotabiframe_0" : iframename;
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse,
+            resetForm: true
+        }
+        $('#keylinktypeadd').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+        parent.scrolclear();
+    })
+
+
+
+
+    function formverify(formData) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['title'] == "") {
+            document.keylinktypeadd.title.focus();
+            parent.basic_alert(js_keytypename_empty);
+            return false;
+        }
+        if (get['keywordlist'] == "") {
+            document.keylinktypeadd.keywordlist.focus();
+            parent.basic_alert(js_keyworklist_empty);
+            return false;
+        }
+        if (get['description'] == "") {
+            document.keylinktypeadd.description.focus();
+            parent.basic_alert(js_description_empty);
+            return false;
+        }
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+    }
+    function saveResponse(options) {
+        //parent.closeifram();
+        if (options == true) {
+            parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+            parent.success_alert(js_add_ok);
+        } else {
+            parent.error_alert(js_add_no);
+        }
+        parent.scrolopen();
+        parent.onaletdoc()
+    }
+</script>
+<form name="keylinktypeadd" id="keylinktypeadd" method="post" action="@ViewBag.actionURL">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<!--查看已选择的类型-->
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中填写全网优化词分组属性</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle2">
+						<td class="trtitle01">所属模型</td>
+						<td width="85%" class="trtitle02">
+                            <div class="col-xs-4 pl0">
+                                @{
+                                    if (ViewBag.modelid == null)
+                                    {
+                                        <select size="1" name="modelid" id="modelid" class="form-control">
+                                            <option value="0">请选择模型</option>
+                                            @{
+                                        IEnumerable<sys_model> list = new sys_modelService().List();
+                                        foreach (var l in list)
+                                        {
+                                            <option value="@l.id" @(l.id == Model.modelid ? " selected" : "")>@l.title</option>
+                                        }
+                                            }
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        sys_model m = new sys_modelService().Query(ViewBag.modelid);
+                                        <input type="hidden" name="modelid" value="@ViewBag.modelid" /><span class="colorgblue">@m.title</span>
+                                    }
+                                }
+                            </div>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle011">优化词分组名称</td>
+						<td width="85%" class="trtitle02"><input type="text" name="title" value="@Model.title" size="60" maxlength="100" class="infoInput"/> <span class="cautiontitle">请输入长度不大于50个字符的任意关键字</span></td>
+					</tr>
+					<tr class="trstyle3">
+						<td width="15%" class="trtitle011">Keywords</td>
+						<td width="85%" class="trtitle02">
+                            <textarea name="keywordlist" id="keywordlist" class="form-control">@Model.keywordlist</textarea>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01"></td>
+						<td width="85%" class="trtitle02">
+							<a class="filecheck" href="#body" onclick="javascript:parent.windowsdig('选择Keywords优化词','iframe:@Url.Action("SelectList", "Keylink")?modelid=@ViewBag.modelid&inputtext=keywordlist&checkfrom=input&iframename='+self.frameElement.getAttribute('name'),'650px','380px','iframe');">选择Keywords优化词</a>
+							<span class="cautiontitle">请在关键字与关键字中间用","隔开，长度不大80个字符</span>
+						</td>
+					</tr>
+					<tr class="trstyle3">
+						<td width="15%" class="trtitle011">Description</td>
+						<td width="85%" class="trtitle02">
+							<textarea name="description" cols="50" class="form-control" >@Model.description</textarea>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01"></td>
+						<td width="85%" class="trtitle02"><span class="cautiontitle">请输入长度不大于80个字符的任意字符</span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">是否启用</td>
+						<td class="trtitle02">
+							<input type="checkbox" name="isenable" value="true"@(Model.isenable == true || ViewBag.act == "add" ? " checked=checked" : "")> 启用&nbsp;							<span class="cautiontitle">启用WAP后，可以通过手机等3G设备访问该内容</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td id="right"><input type="submit" id="docaddsubmitbotton" name="Submit" value="保存" class="btn btn-primary mr10" /></td>
+				<td id="left" class="padding-left5"><input type="button" name="cancel" onclick="javascript: closewindow();" value="取消" class="btn btn-default" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

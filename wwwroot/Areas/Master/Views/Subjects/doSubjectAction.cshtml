@@ -1,0 +1,450 @@
+﻿@using LONG.Models
+@model LONG.Models.documents
+@{
+    ViewBag.Title = "doSubjectAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_noselect_empty = "未选择";
+    var js_input_err = "填写错误！";
+    var js_add_tid = "所属分类";
+    var js_link_empty = "跳转地址未填写或填写错误，链接地址前请务必加上http://";
+    var js_filename_empty = "指定生成文件名格式错误，请输入英文字符数字或下划线";
+    var js_doc_add_ok = "恭喜！内容保存成功！";
+    var js_doc_add_ok2 = "恭喜！内容保存成功，请继续添加！";
+    var js_doc_add_no = "抱歉！内容保存失败！";
+    var refalse = "@(ViewBag.act == "add" ? 1 : 0)";
+    var imagestitle = "选择文件";
+    var addbottonname = "选择文件";
+    var remimages = "双击删除图片";
+    var adminurl = "@HttpContext.Current.Server";
+    var iframename = "@ViewBag.iframename";
+    iframename = iframename == '' ? "frmMain" : iframename;
+
+    $(document).ready(function () {
+        new CBPFWTabs( document.getElementById( 'tabs' ) );
+        editshow("#contents");
+        @(new MvcHtmlString(new sys_model_attrService().CheckAttr("editor1", ViewBag.modelid)))
+        topingyin("title", "filename");
+        //$("#tabcontent").organicTabs({
+        //    "speed": 100,
+        //});
+        $('#color').EasySiteColorSelect();
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse,
+            resetForm: false
+        };
+        $('#myform').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+        parent.scrolclear();
+    })
+
+    function formverify(formData, jqForm, options) {
+        for (var i = 0; i < formData.length; i++) {
+            if (formData[i].name == "contents") {
+                formData[i].value = tinyMCE.get('contents').getContent();
+            }
+            @(new MvcHtmlString(new sys_model_attrService().CheckAttr("editor2", ViewBag.modelid)))
+        }
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+
+        if (get['title'] == '') {
+            document.myform.title.focus();
+            parent.basic_alert('名称' + js_input_err);
+            return false;
+        }
+        @(new MvcHtmlString(new sys_model_attrService().CheckAttrValidate(ViewBag.modelid)))
+        if (get['contents'] == '') {
+            document.myform.contents.focus();
+            parent.basic_alert('内容' + js_input_err);
+            return false;
+        }
+
+        if (get['linkurl'] != '') {
+            if (get['linkurl'].match(/^http:\/\/[a-zA-Z\:.0-9-%@('@')#;&?=/_]+$/ig) == null) {
+                document.myform.linkurl.focus();
+                parent.basic_alert(js_link_empty);
+                return false;
+            }
+        }
+
+        if (get['category'] == 0) {
+            document.myform.category.focus();
+            parent.basic_alert(js_add_tid + js_noselect_empty);
+            return false;
+        }
+
+        if (get['filename'] != '') {            
+            if (get['filename'].match(/^[\w-//]+$/ig) == null) {
+                document.myform.filename.focus();
+                parent.basic_alert(js_filename_empty);
+                return false;
+            }            
+        }
+
+        if(get['isdate'] == true && checkdatebydate(get["startdate"],get["enddate"]) == false){
+            document.myform.startdate.focus();
+            parent.basic_alert("上线时间不能晚于结束时间");
+            return false;
+        }
+
+        var flag = checkfilename('filename', get['filename'], 'category', '@Url.Action("CheckFileName", new { modelid = ViewBag.modelid })', 'filenameerr', '文件夹未存在，可以使用', '文件夹已存在，请换个文件夹名称', @(Model.id == null ? 0 : Model.id));
+        if (flag == false) {
+            parent.basic_alert("文件名有重复，请更换名称");
+            return false;
+        }
+
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading", "Common")', '400px', '180px', 'iframe', false);
+    }
+    function saveResponse(options) {
+        //parent.closeifram();
+        if (options == true) {
+            if (parent.frames[iframename].document.getElementById("selectform")) {
+                parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+            }
+            if (refalse != "1") {
+                parent.success_alert(js_doc_add_ok);
+            } else {
+                parent.swal({
+                    title: "确定操作吗?",
+                    text: js_doc_add_ok2,
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "继续",
+                    cancelButtonText: "返回列表",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.reload();
+                    } else {
+                        parent.scrolopen();parent.onaletdoc();
+                    }
+                });                
+            }
+        } else {
+            parent.error_alert(js_doc_add_no);
+        }
+        if (refalse != "1") {
+            parent.scrolopen();
+            parent.onaletdoc();
+        } else {
+            window.location.reload();
+        }
+    }
+</script>
+<form name="myform" id="myform" method="post" action="@ViewBag.actionURL">
+<input type="hidden" name="modelid" value="@ViewBag.modelid" />
+<input type="hidden" name="category" id="category" value="@(Model.category == null?ViewBag.category:Model.category)" />
+<div id="mainbodybottonauto" class="managebottonadd">
+    <div class="maindobycontent">
+        <div class="suggestion">
+            <span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span> <span class="colorgorningage">专题</span></span>
+        </div>
+        <div id="tabs" class="tabs">
+            <nav>
+                <ul>
+                    <li><a href="#section-1"><span>必填项</span></a></li>
+                    <li><a href="#section-2"><span>SEO设置</span></a></li>
+                    <li><a href="#section-3"><span>其他信息(非必填)</span></a></li>
+                </ul>
+            </nav>
+            <div class="content">
+                <section id="section-1">
+                    <div class="manageeditdiv">
+                        <table class="formtable">
+                            <tr class="trstyle2">
+                                <td class="trtitle01">标题</td>
+                                <td class="trtitle02">
+                                    <input type="text" name="title" size="80" id="title" value="@Model.title" maxlength="250" class="infoInput" />
+                                    <input id="color" name="color" value="@(Model.color == null ? "#000000" : Model.color)" /><span class="cautiontitle">产品名称长度不能大于200个任意字符</span>
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">指定生成文件名</td>
+                                <td class="trtitle02">
+                                    <input type="text" class="infoInput" maxlength="50" size="40" name="filename" id="filename" value="@Model.filename">
+                                    <span id="filenameerr" class="cautiontitle">请填写文件名(无扩展名)，并确保同一分类下无重名，否则会覆盖重名文件</span>
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">内容</td>
+                                <td class="trtitle02">
+                                    <textarea name="contents" id="contents" style="width:99%;height:400px;" class="infoInput">@Model.contents</textarea>
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">创建时间</td>
+                                <td class="trtitle02">
+                                    <input type="text" name="createdate" size="20" maxlength="30" id="createdate" value="@(ViewBag.act == "addsubject" ? DateTime.Now : Model.createdate)" class="infoInput" />
+                                    <a class="datetime" onclick="WdatePicker({el:'createdate',isShowClear:false,readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss'})" href="#body">选择日期</a>
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">时间限制</td>
+                                <td class="trtitle02">
+                                    <input type="radio" onclick="showdiv(1,'#starttimediv|#endtimediv','0|1','trstyle2 hidden|trstyle2 show',1,1)" @(Model.isdate == true ? " checked" : "") name="isdate" value="true"> 启用&nbsp;
+                                    <input type="radio" onclick="showdiv(0,'#starttimediv|#endtimediv','0|1','trstyle2 hidden|trstyle2 show',1,1)" @(ViewBag.act == "add" || Model.isdate == false ? " checked" : "") name="isdate" value="false"> 关闭							<span class="cautiontitle">如果启用时间限制，会按以下时间段进行显示</span>
+                                </td>
+                            </tr>
+                            <tr id="starttimediv" class="trstyle2@(ViewBag.act == "add" || Model.isdate == false ? " displaynone":"")">
+                                <td class="trtitle01">上线时间</td>
+                                <td class="trtitle02">
+                                    <input type="text" name="startdate" size="20" maxlength="30" id="startdate" value="@(ViewBag.act == "addsubject" ? DateTime.Now : Model.startdate)" class="infoInput" />
+                                    <a class="datetime" onclick="WdatePicker({el:'startdate',isShowClear:false,readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss'})" href="#body">选择日期</a>
+                                </td>
+                            </tr>
+                            <tr id="endtimediv" class="trstyle2@(ViewBag.act == "add" || Model.isdate == false ? " displaynone":"")">
+                                <td class="trtitle01">下线时间</td>
+                                <td class="trtitle02">
+                                    <input type="text" name="enddate" size="20" maxlength="30" id="enddate" value="@(ViewBag.act == "addsubject" ? DateTime.Now : Model.enddate)" class="infoInput" />
+                                    <a class="datetime" onclick="WdatePicker({el:'enddate',isShowClear:false,readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss'})" href="#body">选择日期</a>
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">排序</td>
+                                <td class="trtitle02">
+                                    <input type="text" name="sortid" size="5" maxlength="5" id="sortid" value="@(Model.sortid == null ? 50 : Model.sortid)" class="infoInput" />
+                                    <span class="cautiontitle">请填写大于0的整数，默认为50</span>
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">点击数</td>
+                                <td class="trtitle02">
+                                    <input type="text" name="clicks" size="5" maxlength="5" id="clicks" value="@(Model.clicks == null ? 0 : Model.clicks)" class="infoInput" />
+                                    <span class="cautiontitle">请填写大于0的整数，默认为0</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+                <section id="section-2">
+                    <div class="manageeditdiv">
+
+                        <table class="formtable">
+                            <tr class="trstyle2">
+                                <td class="trtitle01"></td>
+                                <td class="trtitle02">
+                                    <a class="keyselect" href="#body" onclick="javascript:parent.windowsdig('选择TAG关键字','iframe:@Url.Action("SelectList", "Keylink", new { modelid = ViewBag.modelid })&inputtext=tags&checkfrom=input&iframename='+self.frameElement.getAttribute('name'),'650px','380px','iframe');">选择TAG关键字</a>
+                                </td>
+                            </tr>
+                            <tr class="trstyle3">
+                                <td class="trtitle01">TAG标签</td>
+                                <td class="trtitle02">
+                                    <input type="text" name="tags" id="tags" maxlength="100" value="@Model.tags" class="infoInput" style="width:98%;" />
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01"></td>
+                                <td class="trtitle02"><span class="cautiontitle">多个标签请用","隔开，会根据指定标签生成内链接</span></td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">自定义TITLE</td>
+                                <td class="trtitle02"><input type="text" name="headtitle" id="headtitle" value="@Model.headtitle" maxlength="100" class="infoInput" style="width:98%;" /></td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01"></td>
+                                <td class="trtitle02">
+                                    <a class="keyselect" href="#body" onclick="javascript:parent.windowsdig('选择全网优化词分组','iframe:@Url.Action("SelectList", "KeylinkType", new { modelid = ViewBag.modelid })&inputtext=keywords&checkfrom=input&iframename='+self.frameElement.getAttribute('name'),'850px','450px','iframe');">选择全网优化词分组</a>
+                                    <a class="keyselect" href="#body" onclick="javascript:parent.windowsdig('选择Keywords优化词','iframe:@Url.Action("SelectList", "Keylink", new { modelid = ViewBag.modelid })&inputtext=keywords&checkfrom=input&iframename='+self.frameElement.getAttribute('name'),'650px','380px','iframe');">选择Keywords优化词</a>
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">自定义Keywords</td>
+                                <td class="trtitle02">
+                                    <input type="text" name="keywords" id="keywords" maxlength="100" value="@Model.keywords" class="infoInput" style="width:98%;" />
+                                </td>
+                            </tr>
+                            <tr class="trstyle2">
+                                <td class="trtitle01">自定义Description</td>
+                                <td class="trtitle02">
+                                    <textarea name="description" id="description" class="form-control">@Model.description</textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+                <section id="section-3">
+                    <div class="manageeditdiv">                        
+                                <table class="formtable">
+                                    @* 自定义字段开始 *@
+                                    @(new MvcHtmlString(new sys_model_attrService().ShowModelAttr(ViewBag.modelid, Model.id == null ? 0 : Model.id)))
+                                    @* 自定义字段结束 *@
+                                    <tr class="trstyle2">
+                                        <td class="trtitle01">代表图片</td>
+                                        <td class="trtitle02">
+                                            <ul class="addpiclist">
+                                                <li id="addsrlipic">
+                                                    <a title="选择图片" onclick="javascript:parent.windowsdig('选择图片','iframe:@Url.Action("Index", "FileManage", new { getbyid = "addsrlipic", fileinputid = "imgurl", checkfrom = "picshow", filetype = "img", maxselect = 1 })&iframename='+self.frameElement.getAttribute('name'),'900px','480px','iframe')" href="#body">
+                                                        <p><img id="addsrpic" src="@(Model.imgurl == null ? "/areas/master/themes/images/pic.png" : Model.imgurl)" width="100"></p>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            <input type="hidden" name="imgurl" id="imgurl" value="@Model.imgurl" />
+                                        </td>
+                                    </tr>
+                                    <tr class="trstyle2">
+                                        <td class="trtitle01">简介</td>
+                                        <td class="trtitle02">
+                                            <textarea name="summary" id="summary" class="form-control">@Model.summary</textarea>
+                                        </td>
+                                    </tr>
+                                    <tr class="trstyle2">
+                                        <td class="trtitle01">状态设置</td>
+                                        <td style="line-height: 200%" class="trtitle02">
+                                            <input type="checkbox" name="isenable" value="true" @(ViewBag.act == "add" || Model.isenable == true ? " checked=checked" : "")> 启用&nbsp;
+                                            <input type="checkbox" name="isrecommend" value="true" @(Model.isrecommend == true ? " checked=checked" : "")> 推荐&nbsp;
+                                            <input type="checkbox" name="istop" value="true" @(Model.istop == true ? " checked=checked" : "")> 置顶&nbsp;
+                                            <input type="checkbox" name="isbest" value="true" @(Model.isbest == true ? " checked=checked" : "")> 精华&nbsp;
+                                            <input type="checkbox" name="iswidth" value="true" @(Model.iswidth == true ? " checked=checked" : "")> 宽屏&nbsp;
+                                        </td>
+                                    </tr>
+                                    @{
+                                        if (new sys_modelService().CheckModel(ViewBag.modelid, "isextid"))
+                                        {
+                                            <tr class="trstyle2">
+                                                <td class="trtitle01">附加分类</td>
+                                                <td class="trtitle02">
+                                                    <div class="col-xs-2 pl0">
+                                                        <select size="8" name="extcategory[]" id="extcategory" multiple="multiple" class="form-control">
+                                                            <optgroup label="请选择所属副分类（按Ctrl+左键可进行多选）">
+                                                                @(new MvcHtmlString(new sys_model_categoryService().OptionList(Model.extcategory == null ? null : Model.extcategory, ViewBag.modelid, 0, false)))
+                                                            </optgroup>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr class="trstyle2 displaynone"><td colspan="2"><input type="text" name="extcategory" value="" /></td></tr>
+                                        }
+                                    }
+                                    <tr class="trstyle2">
+                                        <td class="trtitle01">外部链接地址</td>
+                                        <td class="trtitle02">
+                                            <input type="text" name="linkurl" size="50" maxlength="230" value="@Model.linkurl" class="infoInput" />
+                                            <span class="cautiontitle">请在跳转链接地址前加上http://</span>
+                                        </td>
+                                    </tr>
+                                    @{
+                                        if (new sys_modelService().CheckModel(ViewBag.modelid, "isalbum"))
+                                        {
+                                            <tr class="trstyle2">
+                                                <td class="trtitle03" colspan="2">相册管理</td>
+                                            </tr>
+                                            <tr class="trstyle3">
+                                                <td class="trtitle01">相册图片</td>
+                                                <td class="trtitle02">
+                                                    <a class="picselect" href="#body" onclick="javascript:parent.windowsdig('增加相册图片','iframe:@Url.Action("Index", "FileManage", new { getbyid = "addpiclist", fileinputid = "albumlist", checkfrom = "function", filetype = "img", maxselect = 20 })&iframename='+self.frameElement.getAttribute('name'),'900px','480px','iframe')">增加相册图片</a>
+                                                    <span class="cautiontitle">如需删除图片，请双击以下要删除的图片即可！</span>
+                                                </td>
+                                            </tr>
+                                            <tr class="trstyle2">
+                                                <td class="trtitle01"></td>
+                                                <td class="trtitle02">
+                                                    <ul class="albumlistinput" id="addpiclist">
+                                                        @{
+                                            if (Model.albumlist != null)
+                                            {
+                                                string[] albumlist = Model.albumlist.Split('|');
+                                                for (int i = 0; i < albumlist.Length - 1; i++)
+                                                {
+                                                    documents_album album = new documents_albumService().Query(albumlist[i], ViewBag.modelid);
+                                                    <li ondblclick="$(this).remove();removeval('albumlist','@albumlist[i]');">
+                                                        <div class="albumpic"><p><img src="@albumlist[i]" width="100" height="100"></p></div>
+                                                        <div class="albuminput">
+                                                            <p><input type="text" name="picname[]" value="@album.picname" style="width:550px;" maxlength="150" class="infoInput"></p>
+                                                            <p><textarea name="filedes[]" style="width:550px;height:75px;" class="smallInput">@album.filedes</textarea></p>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            }
+                                                        }
+                                                    </ul>
+                                                    <input type="hidden" name="albumlist" id="albumlist" value="@Model.albumlist" />
+                                                </td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr class="trstyle2 displaynone"><td colspan="2"><input type="text" name="albumlist" value="" /></td></tr>
+                                        }
+                                    }
+                                    @{
+                                        if (new sys_modelService().CheckModel(ViewBag.modelid, "islinkdid"))
+                                        {
+                                            <tr class="trstyle2">
+                                                <td class="trtitle01">关联内容</td>
+                                                <td class="trtitle02">
+                                                    <a class="filecheck" href="#body" onclick="javascript:parent.windowsdig('关联内容','iframe:@Url.Action("SelectList", new { delid = Model.id == null ? 0 : Model.id })&inputtext=linkids&getbyid=infolinked&checkfrom=function&iframename='+self.frameElement.getAttribute('name'),'800px','400px','iframe');">选择内容</a>
+                                                </td>
+                                            </tr>
+                                            <tr class="trstyle2">
+                                                <td class="trtitle01"></td>
+                                                <td class="trtitle02">
+                                                    <ul class="infolinked" id="infolinked">
+                                                        @{
+                                            if (Model.linkids != null)
+                                            {
+                                                string[] ids = Model.linkids.Split(',');
+                                                for (int i = 0; i < ids.Length - 1; i++)
+                                                {
+                                                    documents ntitle = new documentsService().Query(int.Parse(ids[i]));
+                                                    <li id="didlinklist@(ids[i])">@ntitle.title <span onclick="delinfolist('didlinklist@(ids[i])','@(ids[i])','linkids')" class="del">删除</span></li>
+                                                }
+                                            }
+                                                        }
+                                                    </ul>
+                                                    <input type="hidden" name="linkids" id="linkids" value="@Model.linkids" />
+                                                </td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr class="trstyle2 displaynone"><td colspan="2"><input type="text" name="linkids" value="" /></td></tr>
+                                        }
+                                    }
+                                </table>
+                    </div>
+               </section>
+                    </div>
+            </div>
+    </div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table width="100%">
+			<tr>
+				<td id="right"><input type="submit" id="myformsubmitbotton" name="Submit" value="保存" class="btn btn-primary mr10" /></td>
+				<td id="left" class="padding-left5"><input type="button" name="cancel" onclick="javascript: closewindow();" value="取消" class="btn btn-default" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

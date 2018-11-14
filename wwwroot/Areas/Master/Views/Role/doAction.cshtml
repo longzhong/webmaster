@@ -1,0 +1,109 @@
+﻿@model LONG.Models.sys_role
+@using System.Text
+@using LONG.Models
+@{
+    ViewBag.Title = "doAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+	var resizewindow= null;
+
+	window.onresize = function(){
+		var h = $(window).height();
+		if(resizewindow!=h){
+			sizewindow();
+			resizewindow=h;
+		}
+	}
+
+	function sizewindow(){
+		var h = $(window).height();
+		if(document.getElementById("mainbodybottonauto")){
+			$('.managebottonadd').css({height:h-40});
+		}
+	}
+	var js_powername_empty  = "权限组输入错误，不能为空，可输入任意字符！";
+	var js_edit_ok = "恭喜！权限组修改成功";
+	var js_edit_no = "抱歉！权限组修改失败，请检查您的输入项是否正确";
+	var iframename = "@ViewBag.iframename";
+    $(document).ready(function () {
+	    var h = $(window).height();
+		$('.managebottonadd').css({height:h-40});
+		var options = {
+			beforeSubmit: formverify,
+			success:saveResponse,
+			resetForm: false
+		}
+		$('#classedit').submit(function () {
+			$(this).ajaxSubmit(options);
+			return false;
+		});
+	})
+    
+	function formverify(formData) {
+		var queryString = $.param(formData);
+		var get=urlarray(queryString);
+		if(get['powername']==""){
+			document.poweredit.powername.focus();
+			parent.basic_alert(js_powername_empty);
+			return false;
+		}
+		//parent.windowsdig('Loading','iframe:@Url.Action("Loading","Common")','400px','180px','iframe',false);
+	}
+	function saveResponse(options){
+	    //parent.closeifram();
+		if (options == true){
+		    parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+		    parent.success_alert(js_edit_ok);
+		}else{
+		    parent.error_alert(js_edit_no);
+		}
+		parent.onaletdoc();
+	}
+</script>
+<form name="classedit" id="classedit" method="post" action="@ViewBag.actionURL">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">您现在所修改的角色为@(Model.rolename)</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle2">
+						<td class="trtitle01">角色名称</td>
+						<td class="trtitle02"><input type="text" name="rolename" size="25" maxlength="20" value="@Model.rolename" class="infoInput"/> <span class="cautiontitle">权限组名称不能为空，可输入任意字符！</span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">权限列表</td>
+						<td class="trtitle02">
+							<table width="100%" border="0" cellspacing="0" cellpadding="2">
+							   @{
+                                   StringBuilder htmlString = new StringBuilder();
+                                   new sys_role_powerService().Power(Model.id, 0, htmlString);   
+                                }   
+                                @(new MvcHtmlString(htmlString.ToString()))           
+                            </table>
+
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td id="right"><input type="submit" id="submitbotton" name="Submit" value="保存" class="btn btn-primary mr10" /></td>
+				<td id="left" class="padding-left5"><input type="button" name="cancel" onclick="javascript:parent.onaletdoc();" value="取消" class="btn btn-default" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

@@ -1,0 +1,390 @@
+﻿@using LONG.Models
+@{
+    List<sys_model> mlist = new sys_modelService().List();
+    List<sys_model> mlist2 = new sys_modelService().List(false);
+    string midlist = string.Empty;
+    string midlist2 = string.Empty;
+    foreach(var m in mlist){
+        midlist += m.id + ",";
+    }
+    foreach (var m in mlist2)
+    {
+        midlist2 += m.id + ",";
+    }
+    midlist = midlist.Substring(0, midlist.Length - 1);
+    midlist2 = midlist2.Substring(0, midlist2.Length - 1);
+    string file_fileex = Utility.GetConfig("file_fileex"); //生成文件的扩展名
+    string entrance_file = Utility.GetConfig("entrance_file"); //默认首页
+}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<title>Loading</title>
+		<link href="/areas/master/themes/css/baselist.css" rel="stylesheet" type="text/css" />
+		<link href="/areas/master/themes/css/all.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="/areas/master/scripts/jquery.js"></script>
+		<script type="text/javascript" language="JavaScript">
+			var createmain_doc_mess_title1 = "条";
+			var createmain_doc_mess_title3 = "条生成完成";
+			var createmain_doc_mess_title4 = "当前正在生成网站内容，需要生成的数量为：";
+			var createmain_doc_mess_title5 = "当前正在生成网站分类，需要生成的数量为：";
+			var createmain_doc_mess_title6 = "当前正在生成首页";
+			var createmain_bat_typeinfo = "主页生成";
+			var createmain_bat_typeinfo2 = "栏目及内容生成";
+			var createmain_bat_typeinfo3 = "专题生成";
+			var createmain_mess_title3 = " 运行时长：";
+			var createmain_mess_title4 = "秒";
+			var createmain_creat_yes = "生成成功，路径为 ";
+			var createmain_creat_no = "生成失败，路径为 ";
+			var createmain_js_add_ok = "恭喜！生成成功！";
+			var createmain_creat_no_c = "目录创建失败";
+			var createmain_creat_no_w = "生成目录无读写权限";
+			var createmain_creat_no_t = "无法找到模板";
+			var createmain_creat_bottonname = "正在生成中";
+			var botton_close = "关闭窗口";
+			var createmain_creat_title = "生成状态";
+			var err_createmain_err_title = "<table border=\"0\" width=\"100%\"><tr><td id=\"center\" class=\"strong colorgorning2\" style=\"padding:10px\">系统已禁用静态页面生成，需要在“网站参数设置”中开启静态生成</td></tr></table>";
+			var is_html = "1";
+			$(document).ready(function() {
+				var h = $(window).height();
+				$('#mainwindowhidden').css({height: h - 39});
+				if (is_html == 1) {
+					get_load();
+				} else {
+					$('#filecheckmanger').empty();
+					$('#filecheckmanger').append(err_createmain_err_title);
+				}
+			});
+			function get_load() {
+				$('#coasecreat').attr('disabled', 'true');
+				$('#coasecreat').val(createmain_creat_bottonname);
+				$('#filecheckmanger').remove();
+				$('#filecheckloading').removeClass().addClass('formdiv diplaytrue');
+
+				//homeload();
+
+				var midlist = '@midlist';
+
+			    var docnumloadurl = "@Url.Action("CreateAllBegin","Html")";
+
+				$('#loadingline').css("width", 0);
+				    $.ajax({
+				    type: "POST",
+				    url: docnumloadurl,
+				    data: "lng=cn&midlist=" + midlist,
+				    success: function (date) {
+				        if (date.length > 0) {
+				            loadocnum(date);
+				        }
+				    }
+				    });
+					$(this).ajaxStop(function() {
+					$("#htmltext").append("<br>" + createmain_js_add_ok);
+					$('#coasecreat').val(botton_close);
+					$('#coasecreat').attr('disabled', '');
+				});
+			}
+
+			function typest() {
+
+			    var midlist = '@midlist';
+				var midArray = midlist.split(',');
+				var count = midArray.length;
+				if (count <= 0)
+					return false;
+
+				var typeloadurl = "@Url.Action("CreateAllBegin","Html")";
+			    var typelist;
+				$('#loadingline').css("width", 0);
+				$.ajax({
+					type: "POST",
+					url: typeloadurl,
+					data: "lng=cn&midlist=" + midlist,
+					success: function(data) {
+					    if (data != '') {
+					        //alert("typelist:"+data);
+							var typeArray = data.split(',');
+							var typecount = typeArray.length;
+							typelist = data;
+							var countmax = 500 / typecount;
+							var equanum = 100 / typecount;
+							typeload(data, countmax,equanum, 0, 1);				
+							
+						}
+					}
+				});
+				return true;
+			}
+
+		    function typeload(typelist, countmax, equanum, equ, forid) {
+				var typeArray = typelist.split(',');
+				if (!typeArray[0]) {
+				    //substr();
+				    index();
+					return false;
+				}
+				var loadurl = "@Url.Action("CreateCategory","Html")";
+				var typeid = typeArray[0];
+
+				$.ajax({
+					type: "POST",
+					url: loadurl,
+					data: "category=" + typeid + "&creattype=0&pnumber=30",
+					success: function(date) {
+					    //if (date == true) {
+					        $("#loadtext").empty().append(createmain_doc_mess_title5 + forid + createmain_doc_mess_title1);
+					        var str = '<b><span class="colorthree">' + date.filename + "</span></b>" + createmain_creat_yes + date.filepath + '<br/>';
+							$("#htmltext").empty().append(str);
+							equ = equ + equanum;
+							var text = parseInt(equ) + "%";
+							var width = forid * countmax;
+							$('#loadingline').css("width", width);
+							$("#loadingline").empty().append(text);
+							typeArray = typeArray.splice(1);
+
+							forid++;
+							var nowtypelist = typeArray.join(',');
+							typeload(nowtypelist, countmax, equanum, equ, forid);
+						//}
+					}
+				});
+			}
+
+		    function index() {
+
+                var loadurl = "@Url.Action("CreateIndex","Html")";
+				$('#loadingline').css("width", 0);
+				$.ajax({
+				    type: "POST",
+				    url: loadurl,
+				    success: function (data) {
+				        if (data == true) {
+				            $("#loadtext").empty().append(createmain_doc_mess_title6);
+				            $('#loadingline').css("width", 500);
+				            var str = '<b><span class="colorthree">首页</span></b>' + createmain_creat_yes + '/@entrance_file@file_fileex<br/>';
+				            $("#htmltext").empty().append(str);
+				            $("#loadingline").empty().append('100%');
+				        }
+				    }
+				});
+				return true;
+		    }
+
+			function substr() {
+
+			    var midlist = '@midlist2';
+				var midArray = midlist.split(',');
+				var count = midArray.length;
+				if (count <= 0)
+					return false;
+
+				var loadurl = "@Url.Action("CreateSubjectBegin","Html")";
+
+				$('#loadingline').css("width", 0);
+				$.ajax({
+					type: "POST",
+					url: loadurl,
+					data: "lng=cn&midlist=" + midlist,
+					success: function(data) {
+					    if (data != '') {
+							var sidArray = data.split(',');
+							var sidcount = sidArray.length;
+
+							var countmax = 500 / sidcount;
+
+							var equanum = 100 / sidcount;
+							subload(data, countmax, equanum, 0, 1);
+							
+							var sidstrnum = sidcount - 1;
+							
+						}
+					}
+				});
+				return true;
+			}
+
+		    function subload(sublist, countmax, equanum, equ, forid) {
+
+				var sidArray = sublist.split(',');
+				if (!sidArray[0]) {
+					return false;
+				}
+				var sloadurl = "@Url.Action("CreateCategory","Html")";
+				var sid = sidArray[0];
+				$.ajax({
+					type: "POST",
+					url: sloadurl,
+					data: "category=" + sid + "&creattype=0&pnumber=30",
+					success: function(date) {
+					    //if (date == true) {
+					        $("#loadtext").empty().append(createmain_doc_mess_title6 + forid + createmain_doc_mess_title1);
+					        var str = '<b><span class="colorthree">' + date.filename + "</span></b>" + createmain_creat_yes + date.filepath + '<br/>';
+					        $("#htmltext").empty().append(str);
+					        equ = equ + equanum;
+					        var text = parseInt(equ) + "%";
+							var width = forid * countmax;
+							$('#loadingline').css("width", width);
+							$("#loadingline").empty().append(text);
+							sidArray = sidArray.splice(1);
+							forid++;
+							var nowsidlist = sidArray.join(',');
+							subload(nowsidlist, countmax, equanum, equ, forid);
+						//}
+					}
+				});
+			}
+
+			//function homeload() {
+			//	var loadurl = "index.php?archive=createmain&action=indexsave";
+			//	$.ajax({
+			//		type: "POST",
+			//		url: loadurl,
+			//		data: "lng=cn"
+			//	});
+			//	return true;
+			//}
+
+			//获取生成内容总数
+		    function loadocnum(typelist) {
+			    var loadurl = "@Url.Action("CreateContentBegin","Html")";
+		        var limit = 10;
+		        //alert(modelid);
+			    $.ajax({
+			        type: "POST",
+			        url: loadurl,
+			        data: "categorylist=" + typelist + "&creattype=@ViewBag.creattype&startdate=@ViewBag.startdate",
+					success: function (date) {
+					    //alert(date.num);
+					    if (date.num > 0) {
+					        var limitnum = Math.round(date.num / limit + 1);
+					        //var countmax = 500 / limitnum;
+					        var countmax = 500 / parseInt(date.num);
+					        //alert(100/date.num);
+					        var ids = date.ids;
+					        var equanum = 100 / date.num;
+					        //$("#loadnum").empty().append(date.num);
+					        //alert(date.num);
+					        //alert("contentlist:" + ids);
+					        creatdoc(0, 0, limit, ids, limitnum, countmax, equanum, 0, 1);
+					        typest();
+					    }
+					}
+			    });
+            }
+
+		    function creatdoc(limitstart, i, limitnummax, typelist, limitnum, countmax, equanum, equ, forid) {
+			    var loadurl = "@Url.Action("CreateContent","Html")";
+
+				var loadmum = limitstart + limitnummax;
+				var typeArray = typelist.split(',');
+				//alert(typeArray[0]);
+				if (!typeArray[0])
+				    return false;
+				var typesid;
+				var flag = false;
+				if (typelist.indexOf(',') > 0) {
+				    typesid = typeArray[0];
+				} else {
+				    typesid = typelist;				    
+				    flag = true;
+				}
+				//alert(typelist);
+			    //alert(typesid);
+				$.ajax({
+				    type: "POST",
+				    url: loadurl,
+				    data: "startdate=@ViewBag.startdate&docid=" + typesid + "&limit=" + limitstart + "&limitnummax=" + limitnummax,
+				    success: function (date) {
+				        //alert(date.flag);
+			            if (date.flag == true) {
+			                //width = width + countmax;
+			                equ = equ + equanum;
+			                var text = parseInt(equ) + "%";
+			                $("#loadtext").empty().append(createmain_doc_mess_title4 + forid + createmain_doc_mess_title1);
+			                var loadstr = '<b><span class="colorthree">' + date.title + '</span></b> ' + createmain_creat_yes + date.filepath;//limitstart + ' - ' + loadmum;
+			                var width = forid * countmax;
+			                
+			                loadtxt(loadstr, width, text);
+			                //$("#loadnum").empty().append(forid);
+			                i++;
+			                limitstart = i * limitnummax;
+			                if (flag == false) {
+			                    typeArray = typeArray.splice(1);
+			                    var nowtypelist = typeArray.join(',');
+			                    //alert(equanum + "/" + forid + "/" + nowtypelist);
+			                    forid++;
+			                    creatdoc(limitstart, i, limitnummax, nowtypelist, limitnum, countmax, equanum, equ, forid);
+			                }
+			            } else {
+			                i++;
+			            }
+			        }
+			    });
+			}
+		    function loadtxt(date, width, text) {
+		        //alert(date);
+		        if (date == false)
+		            return false;
+		        var str = date + '<br/>';
+		        if (width == 500)
+		            text = "100%";
+		        //alert(str);
+		        $("#htmltext").empty().append(str);
+		        $('#loadingline').css("width", width);
+		        $("#loadingline").empty().append(text);
+		    }
+			function loadclose() {
+				parent.closeifram();
+			}
+		</script>
+	</head>
+
+	<body>
+		<div class="centerrightwindow">
+			<div id="mainwindowhidden">
+				<div class="suggestion">
+					<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="padding-left5 colorgorningage">页面正在生成中，请耐心等待...</span></span>
+				</div>
+				<div class="sugtitle-line"></div>
+				<div class="formdiv" id="filecheckmanger">
+					<table border="0" width="100%">
+						<tr>
+							<td id="center" style="padding:25px;"><img alt="" src="templates/images/loading_02.gif" /></td>
+						</tr>
+						<tr>
+							<td id="center" class="strong colorgorning2" style="padding:0px">操作完毕后系统将自动关闭此提示窗口！</td>
+						</tr>
+					</table>
+				</div>
+				<div class="formdiv displaynone" id="filecheckloading">
+					<table border="0" width="100%">
+						<tr>
+							<td id="loadtext" style="padding-top:10px;" class="colorgorning2 center lineheight160"></td>
+						</tr>
+						<tr>
+							<td width="100%" style="padding-top:10px;" class="center">
+								<div class="loadingtable" id="loadingtable">
+									<div class="loadingline" id="loadingline"></div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td id="htmltext" style="padding-top:5px;" class="colorgorningage center lineheight160"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div id="downbotton">
+				<div id="subbotton">
+					<table border="0" width="100%">
+						<tr id="bottonsubmit">
+							<td id="center"><input type="button" name="cancel" id="coasecreat" onClick="javascript:loadclose();" value="关闭窗口" class="buttonface"/></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

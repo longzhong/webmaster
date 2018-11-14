@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "SubjectList";
+    Layout = "~/Areas/Master/Views/Shared/PageListLayout.cshtml";
+}
+<div id="mainlistbotton">
+<ul class="listbottonul" id="listbottonul">
+    <li class="menumain"><a hidefocus="true" title="新增" href="#body" onclick="javascript:parent.onbotton('新增','@Url.Action("doSubjectAction", new { act = "addsubject", subjectid = ViewBag.subjectid, modelid = ViewBag.modelid })&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),false,'addinfo',self.frameElement.getAttribute('name'));" class="btn btn-primary btn-sm mr5"><i class="fa fa-plus-circle"></i>新增</a></li>
+    <li class="menumain"><a hidefocus="true" title="编辑" href="#body" onclick="javascript:parent.onbottondo('编辑','@Url.Action("doSubjectAction", new { act = "editsubject", subjectid = ViewBag.subjectid, modelid = ViewBag.modelid })&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),false,'editinfo',self.frameElement.getAttribute('name'),'selectinfoid','selectform','whoid','抱歉：您只能选择一条记录操作！');" class="btn btn-primary btn-sm mr5"><i class="fa fa-edit"></i>编辑</a></li>
+    <li class="menumain"><a hidefocus="true" title="编辑" href="#body" onclick="javascript:parent.onbottondo('复制','@Url.Action("doSubjectAction", new { act = "copysubject", subjectid = ViewBag.subjectid, modelid = ViewBag.modelid })&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),false,'editinfo',self.frameElement.getAttribute('name'),'selectinfoid','selectform','whoid','抱歉：您只能选择一条记录操作！');" class="btn btn-primary btn-sm mr5"><i class="fa fa-copy"></i>复制</a></li>
+    <li class="menumain"><a class="btn btn-primary btn-sm mr5" onclick="javascript:callrun('@Url.Action("DeleteActionLog")','selectinfoid',false,null,null,'@Url.Action("Loading","Common")','此操作将会导致数据删除，请确认该操作！','您未选择要操作的数据，请返回重新选择！',true,'恭喜：您此次操作已成功！','抱歉：您此次操作失败！','selectform','selectall','check_all');" href="#body" hidefocus="true"><i class="fa fa-remove"></i>删除</a></li>
+	<li class="menumain"><a class="btn btn-primary btn-sm mr5" href="#body" onclick="javascript:refresh('selectform','selectall','check_all');" title="刷新" hidefocus="true"><i class="fa fa-refresh"></i>刷新</a></li>
+</ul>
+</div>
+<div class="listitle">
+<table width="100%" bordercolor="#FFFFFF" border="0">
+	<tbody>
+        <tr>
+		<td width="4%"><input type="checkbox" onclick="select_ok('selectform', 'selectall', 'check_all');" value="1" id="check_all" name="check_all"></td>
+		<td width="7%">排序</td>
+        <td width="7%">ID</td>
+		<td width="56%">内容标题</td>
+		<td width="10%">分类</td>
+		<td width="8%">点击数</td>
+		<td width="8%">状态</td>
+	    </tr>
+    </tbody>
+</table>
+</div>
+<div id="mainbody" class="tablist">
+	<form name="selectform" id="selectform" method="post">
+		<input type="hidden" name="loadurl" id="loadurl" value="@Url.Action("SubjectPageList")?subjectid=@ViewBag.subjectid&modelid=@ViewBag.modelid">
+		<input type="hidden" name="maxperpage" id="maxperpage" value="20">
+		<input type="hidden" name="maxhit" id="maxhit" value="5">
+		<input type="hidden" name="nowpage" id="nowpage" value="0">
+		<input type="hidden" name="limitkey" id="limitkey" value="">
+		<input type="hidden" name="limitclass" id="limitclass" value="">
+		<input type="hidden" name="loadname" id="loadname" value="#loadingtabelist">
+		<input type="hidden" name="pagetextname" id="pagetextname" value="#pageinfo">
+		<input type="hidden" name="pagebottonname" id="pagebottonname" value="#Pagination">
+		<input type="hidden" name="oldloadurladd" id="oldloadurladd" value="@Url.Action("SubjectPageList")?subjectid=@ViewBag.subjectid&modelid=@ViewBag.modelid">
+		<input type="hidden" name="pagelistcut" id="pagelistcut" value="0">
+		<div class="loadingdiv" id="loadingtabelist"></div>
+	</form>
+</div>
+<div class="pagelistdiv">
+	<div class="pageinfotext" id="pageinfo"></div>
+	<div class="pagebottonlist" id="pagebotton"><span id="Pagination" class="pagination"></span></div>
+</div>

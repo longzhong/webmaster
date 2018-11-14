@@ -1,0 +1,231 @@
+﻿@model LONG.Models.sys_model_attr
+@{
+    ViewBag.Title = "doAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_attr_typename_empty = "简述文字填写错误或为空，请返回重新填写";
+    var js_attr_attrname_empty = "字段名称填写错误或为空，字段名称输入长度不能小于4和大于40的英文字符，请返回重新填写";
+    var js_attr_attrvalue_empty = "请所选择的字段类型必须有默认值，请检查默认值是否填写错误或为空，请返回重新填写";
+    var js_attr_attrsize_empty = "输入框长度填写错误，请填写长度不小于3的整数";
+    var js_attr_attrrow_empty = "本文框高度填写错误，请填写长度不小于3的整数";
+    var js_attr_attrlenther_empty = "限定输入字符数填写错误，请填写长度不小于1的整数";
+    var js_attr_add_ok = "恭喜！模型字段添加成功！";
+    var js_attr_add_no = "抱歉！模型字段添加失败！";
+    var iframename = "@ViewBag.iframename";
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse
+        }
+        $('#modelattradd').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+    })
+
+    function formverify(formData, jqForm, options) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['title'] == "") {
+            document.modelattradd.title.focus();
+            parent.basic_alert(js_attr_typename_empty);
+            return false;
+        }
+        //if (get['inputtype'] == "select" || get['inputtype'] == "radio" || get['inputtype'] == "checkbox") {
+        //    if (get['attrvalue'] == "") {
+        //        document.modelattradd.attrvalue.focus();
+        //        alert(js_attr_attrvalue_empty);
+        //        return false;
+        //    }
+        //}
+        //if (get['attrname'] == "" || get['attrname'].match(/^[a-zA-Z]{2}[a-zA-Z]{1,45}$/ig) == null) {
+        //    document.modelattradd.attrname.focus();
+        //    alert(js_attr_attrname_empty);
+        //    return false;
+        //}
+        //if (get['attrsize'] != "") {
+        //    if (get['attrsize'].match(/^[1-9]{1}[0-9]{0,2}$/ig) == null) {
+        //        document.modelattradd.attrsize.focus();
+        //        alert(js_attr_attrsize_empty);
+        //        return false;
+        //    }
+        //}
+        //if (get['attrrow'] != "") {
+        //    if (get['attrrow'].match(/^[1-9]{1}[0-9]{0,2}$/ig) == null) {
+        //        document.modelattradd.attrrow.focus();
+        //        alert(js_attr_attrrow_empty);
+        //        return false;
+        //    }
+        //}
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+    }
+    function saveResponse(options) {
+        //parent.closeifram();
+        if (options == true) {
+            parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+            parent.success_alert(js_attr_add_ok);
+        } else {
+            parent.error_alert(js_attr_add_no);
+        }
+        parent.onaletdoc()
+    }
+</script>
+<form name="modelattradd" id="modelattradd" method="post" action="@ViewBag.actionURL">
+<input type="hidden" name="modelid" value="@ViewBag.modelid" />
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<!--查看已选择的类型-->
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中输入要添加的模型字段属性</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle3">
+						<td width="15%" class="trtitle01">简述文字</td>
+						<td width="85%" class="trtitle02"><input type="text" name="title" value="@Model.title" size="80" maxlength="50"  class="infoInput"/></td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01"></td>
+						<td width="85%" class="trtitle02"><span class="cautiontitle">发布内容时显示的字段提示，请输入长度不能大于50的任意字符段</span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01">字段类型</td>
+						<td width="85%" class="trtitle02">
+							<div class="col-xs-2 pl0">
+                                <select name="inputtype" id="inputtype" @(ViewBag.act == "edit" ? " disabled" : "") class="form-control">
+                                    <option value="string" @(Model.inputtype == "string" ? " selected" : "")>单行文本</option>
+                                    <option value="text" @(Model.inputtype == "text" ? " selected" : "")>多行文本</option>
+                                    <option value="editor" @(Model.inputtype == "editor" ? " selected" : "")>编辑器</option>
+                                    <option value="htmltext" @(Model.inputtype == "htmltext" ? " selected" : "")>HTML文本</option>
+                                    @*<option value="int"@(Model.inputtype == "int"?" selected":"")> 整数类型</option>
+            <option value="float"@(Model.inputtype == "float"?" selected":"")> 小数类型</option>*@
+                                    <option value="datetime" @(Model.inputtype == "datetime" ? " selected" : "")>时间类型</option>
+                                    <option value="img" @(Model.inputtype == "img" ? " selected" : "")>图片附件</option>
+                                    <option value="file" @(Model.inputtype == "file" ? " selected" : "")>文件附件</option>
+                                    @*<option value="video"@(Model.inputtype == "video"?" selected":"")>视频附件</option>
+            <option value="select"@(Model.inputtype == "select"?" selected":"")>下拉框</option>*@
+                                    <option value="radio" @(Model.inputtype == "radio" ? " selected" : "")>单选框</option>
+                                    <option value="checkbox" @(Model.inputtype == "checkbox" ? " selected" : "")>多选框</option>
+                                    <option value="selectinput" @(Model.inputtype == "selectinput" ? " selected" : "")>复合选项关联输入框</option>
+                                    @*<option value="decimal"@(Model.inputtype == "decimal"?" selected":"")>价格</option>*@
+                                </select>
+                            </div>
+							<span class="cautiontitle">注意一旦选择不能修改</span>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01">字段名称</td>
+						<td width="85%" class="trtitle02">
+							@{
+                                if(ViewBag.act == "add"){
+                                <input type="text" name="attrname" value="@Model.attrname" size="25" maxlength="50"  class="infoInput"  onblur="checktypename('attrname',this.value,'@Url.Action("CheckAttName",new { modelid = ViewBag.modelid })&inputtype='+document.modelattradd.inputtype.value,'attrnameerr','字段可以使用','字段已存在','attrsubmitbotton');"/>
+                                }else{
+                                <input type="hidden" name="attrname" value="@Model.attrname" />
+                                <span class="colorgreg">@Model.attrname</span>
+                                }
+                            }
+							<span class="cautiontitle" id="attrnameerr">请输入长度不能小于4和大于40的英文字符，注意一旦填写不能修改！</span>
+						</td>
+					</tr>
+					<tr class="trstyle3">
+						<td width="15%" class="trtitle01">提示文字</td>
+						<td width="85%" class="trtitle02"><input type="text" name="modelmark" value="@Model.modelmark" size="80" maxlength="200"  class="infoInput"/> </td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01"></td>
+						<td width="85%" class="trtitle02"><span class="cautiontitle">发布内容时显示的备注内容，请输入长度不能大于200的任意字符段</span></td>
+					</tr>
+					<tr class="trstyle3">
+						<td width="15%" class="trtitle01">默认值</td>
+						<td width="85%" class="trtitle02">
+							<textarea name="attrvalue" cols="40" rows="5" class="form-control">@Model.attrvalue</textarea>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01"></td>
+						<td width="85%" class="trtitle02"><span class="cautiontitle">如果字段为下拉、复合选项关联输入框、单选或多选，请每个默认值之间用","分隔</span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01">字段验证</td>
+						<td width="85%" class="trtitle02">
+							<input type="radio" value="true" name="isvalidate"@(Model.isvalidate == true ? " checked" : "") onclick="ondisplay('validatetextdiv,#validatetextdiv2', 'trstyle2 show')"/> 启用&nbsp;
+							<input type="radio" value="false" name="isvalidate"@(Model.isvalidate == false || ViewBag.act == "add" ? " checked" : "") onclick="ondisplay('validatetextdiv,#validatetextdiv2', 'trstyle2 hidden')"/> 关闭							<span class="cautiontitle">如启用验证，则验证正则表达式输入框不能为空</span>
+						</td>
+					</tr>
+					<tr class="trstyle3 hidden" id="validatetextdiv">
+						<td width="15%" class="trtitle01">验证正则</td>
+						<td width="85%" class="trtitle02">
+							<input type="text" name="validatetext" value="@Model.validatetext" id="validatetext" size="40" maxlength="80" class="infoInput"/>
+							<div class="col-xs-2 pl0">
+                                <select name="validatetext_select" onchange="javascript:$('#validatetext').val(this.value)" class="form-control">
+                                    <option value="">选择预定正则</option>
+                                    <option value="/^[0-9.-]+$/">数字</option>
+                                    <option value="/^[0-9-]+$/">整数</option>
+                                    <option value="/^[a-z]+$/i">字母</option>
+                                    <option value="/^[0-9a-z]+$/i">数字+字母</option>
+                                    <option value="/^[\w\-\.]+@('@')[\w\-\.]+(\.\w+)+$/">E-mail</option>
+                                    <option value="/^[0-9]{5,20}$/">QQ</option>
+                                    <option value="/^http:\/\//">超级链接</option>
+                                    <option value="/^(1)[0-9]{10}$/">手机号码</option>
+                                    <option value="/^[0-9-]{6,13}$/">电话号码</option>
+                                    <option value="/^[0-9]{6}$/">邮政编码</option>
+                                </select>
+                            </div>
+						</td>
+					</tr>
+					<tr class="trstyle2 hidden" id="validatetextdiv2">
+						<td width="15%" class="trtitle01"></td>
+						<td width="85%" class="trtitle02"><span class="cautiontitle">请输入Perl正则，如启用验证却未填写正则表示字段填写不能为空！</span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01">输入框长度</td>
+						<td width="85%" class="trtitle02"><input type="text" name="attrsize" size="6" maxlength="3" value="@(ViewBag.act == "add"? 20 : Model.attrsize)" class="infoInput"/> <span class="cautiontitle">请输入长度不小于3的整数，如果类型为下拉、单选或多选则此属性无效</span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01">本文框高度</td>
+						<td width="85%" class="trtitle02"><input type="text" name="attrrow" size="6" maxlength="3" value="@(ViewBag.act == "add"? 5 : Model.attrrow)" class="infoInput"/> <span class="cautiontitle">请输入长度不小于3的整数，本属性只对多行文本框有效</span></td>
+					</tr>		
+					<tr class="trstyle2">
+						<td width="15%" class="trtitle01">显示状态</td>
+						<td width="85%" class="trtitle02">
+							<input type="radio" value="true" name="isenable"@(Model.isenable == true || ViewBag.act == "add" ? " checked" : "")/> 启用&nbsp;
+							<input type="radio" value="false" name="isenable"@(Model.isenable == false ? " checked":"")/> 关闭							<span class="cautiontitle">如启用字段，则会在输入中显示！</span>
+						</td>
+					</tr>
+				</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="downbotton">
+		<div id="subbotton">
+			<table border="0" width="100%">
+				<tr>
+					<td id="right"><input type="submit" id="attrsubmitbotton" name="Submit" value="保存" class="btn btn-primary mr10" /></td>
+					<td id="left" class="padding-left5"><input type="button" name="cancel" onclick="javascript: parent.onaletdoc();" value="取消" class="btn btn-default" /></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>

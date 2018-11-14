@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Master/Views/Shared/ListLayout.cshtml";
+}
+<script type="text/javascript">
+        function search(loadurl) {
+            if ($.browser.version == 6) var h = document.body.clientHeight; else var h = $(window).height();
+            var formlist = document.getElementById("selectform"), loadurl = loadurl, maxperpage = formlist.elements[1].value, maxhit = formlist.elements[2].value, nowpage = formlist.elements[3].value, loadname = formlist.elements[6].value, pagetextname = formlist.elements[7].value, pagebottonname = formlist.elements[8].value;
+            formlist.elements[0].value = loadurl, pageDimensions(10000, maxperpage, maxhit, nowpage, loadurl, loadname, pagetextname, pagebottonname, "selectform");
+        }
+
+        function sizewindow() {
+            var h = $(window).height();
+            document.getElementById("mainbodyauto") && $("#mainbodyauto").css({
+                "height": h - 99
+            });
+            if (document.getElementById("selectform")) {
+                var formlist = document.getElementById("selectform"), loadurl = formlist.elements[0].value, maxperpage = formlist.elements[1].value, maxhit = formlist.elements[2].value, nowpage = formlist.elements[3].value, loadname = formlist.elements[6].value, pagetextname = formlist.elements[7].value, pagebottonname = formlist.elements[8].value;
+                pageDimensions(10000, maxperpage, maxhit, nowpage, loadurl, loadname, pagetextname, pagebottonname, "selectform");
+            }
+        }
+
+        $(document).ready(function () {
+            $.fn.clickMenu.setDefaults({
+                "arrowSrc": "templates/images/arrow_right.gif"
+            }), $("#listbottonul").clickMenu();
+            var formlist = document.getElementById("selectform"), loadurl = formlist.elements[0].value, maxperpage = formlist.elements[1].value, maxhit = formlist.elements[2].value, nowpage = formlist.elements[3].value, loadname = formlist.elements[6].value, pagetextname = formlist.elements[7].value, pagebottonname = formlist.elements[8].value;
+            if ($.browser.msie) {
+                var h = "351";
+                $("#mainbodyauto").css({
+                    "height": h - 99
+                });
+                pageDimensions(10000, maxperpage, maxhit, nowpage, loadurl, loadname, pagetextname, pagebottonname, "selectform");
+            } else {
+                sizewindow();
+                pageDimensions(10000, maxperpage, maxhit, nowpage, loadurl, loadname, pagetextname, pagebottonname, "selectform");
+            }
+        });
+
+        var resizewindow = null;
+
+        window.onresize = function () {
+            var h = $(window).height();
+            if (resizewindow != h) {
+                sizewindow();
+                resizewindow = h;
+            }
+        }
+        document.oncontextmenu = new Function('event.returnValue=false;');
+        document.onselectstart = new Function('event.returnValue=false;');
+</script>
+<div id="mainlistbotton">
+<ul class="listbottonul" id="listbottonul">
+	@Html.Partial("ButtonList")
+</ul>
+</div>
+<div class="listitle"><table border="0" width="100%" bordercolor="#FFFFFF">
+	<tr>
+		<td width="45%">模板文件名</td>
+		<td width="10%">模板类型</td>
+		<td width="20%">添加时间</td>
+		<td width="25%">操作</td>
+	</tr>
+</table></div>
+<div id="mainbodyauto" class="tablist">
+	<form name="selectform" id="selectform" method="post">
+		<input type="hidden" name="loadurl" id="loadurl" value="@Url.Action("PageList")">
+		<input type="hidden" name="maxperpage" id="maxperpage" value="20">
+		<input type="hidden" name="maxhit" id="maxhit" value="5">
+		<input type="hidden" name="nowpage" id="nowpage" value="0">
+		<input type="hidden" name="limitkey" id="limitkey" value="">
+		<input type="hidden" name="limitclass" id="limitclass" value="">
+		<input type="hidden" name="loadname" id="loadname" value="#loadingtabelist">
+		<input type="hidden" name="pagetextname" id="pagetextname" value="#pageinfo">
+		<input type="hidden" name="pagebottonname" id="pagebottonname" value="#Pagination">
+		<input type="hidden" name="oldloadurladd" id="oldloadurladd" value="@Url.Action("PageList")">
+		<input type="hidden" name="pagelistcut" id="pagelistcut" value="1">
+		<div class="loadingdiv" id="loadingtabelist"></div>
+	</form>
+</div>
+<div class="pagelistdiv">
+	<div class="pageinfotext" id="pageinfo"></div>
+	<div class="pagebottonlist" id="pagebotton"><span id="Pagination" class="pagination"></span></div>
+</div>

@@ -1,0 +1,129 @@
+﻿@using LONG.Models
+@{
+    ViewBag.Title = "Content";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_linknum_empty = "生成链接数填写错误，请填写大于0的整数数值！";
+    var js_add_ok = "恭喜！生成成功！";
+    var js_add_no = "抱歉！生成失败！";
+    var iframename = "";
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var optionsseo = {
+            beforeSubmit: seo_formverify,
+            success: seo_success
+        };
+        $("#createseo").submit(function () {
+            $(this).ajaxSubmit(optionsseo);
+            return false;
+        });
+    })
+    function seo_formverify(formData, jqForm, options) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['linknum'].match(/^[1-9]{1}[0-9]*$/ig) == null) {
+            document.createseo.linknum.focus();
+            parent.basic_alert(js_linknum_empty);
+            return false;
+        }
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+    }
+    function seo_success(options) {
+        //parent.closeifram();
+        if (options == true) {
+            parent.success_alert(js_add_ok);
+        } else {
+            parent.error_alert(js_add_no);
+        }
+        parent.onaletdoc();
+    }
+</script>
+<form method="post" name="createseo" id="createseo" action="@Url.Action("CreateSitemap")">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中选择生成的Google sitemap属性</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle2">
+						<td class="trtitle01">保存路径</td>
+						<td class="trtitle02"><a target="_blank" href="/sitemap/baidusitemap.xml">/sitemap/<span id="sitepath">baidusitemap.xml</span></a></td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">优先级</td>
+						<td class="trtitle02">
+                            <div class="col-xs-2 pl0">
+                                <select size="1" name="priority" class="form-control">
+                                    @*<option selected value="0.1">0.1</option>*@
+                                    <option selected value="0.2">0.2</option>
+                                    <option value="0.3">0.3</option>
+                                    <option value="0.4">0.4</option>
+                                    <option value="0.5">0.5</option>
+                                    <option value="0.6">0.6</option>
+                                    <option value="0.7">0.7</option>
+                                    <option value="0.8">0.8</option>
+                                    <option value="0.9">0.9</option>
+                                    @*<option value="1.0">1.0</option>*@
+                                </select>
+                            </div>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">更新频率</td>
+						<td class="trtitle02">
+							<div class="col-xs-2 pl0">
+                                <select size="1" name="changefreq" class="form-control">
+                                    <option selected value="always">always</option>
+                                    <option value="hourly">hourly</option>
+                                    <option value="daily">daily</option>
+                                    <option value="weekly">weekly</option>
+                                    <option value="monthly">monthly</option>
+                                    <option value="yearly">yearly</option>
+                                    <option value="never">never</option>
+                                </select>
+                            </div>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">生成链接数</td>
+						<td class="trtitle02">
+							<input type="text" name="linknum" size="10" maxlength="3" value="1000" class="infoInput"/>
+							<span class="cautiontitle">建议填写数字不大于当天更新的内容数量</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td><input type="submit" name="Submit" value="确认生成" class="btn btn-primary" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

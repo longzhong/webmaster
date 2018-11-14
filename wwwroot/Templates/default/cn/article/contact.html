@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="wide wow-animation scrollTo smoothscroll" lang="en">
+  <head>
+    <!-- Site Title-->
+    <title>{lw:global.title} - YIPAK</title>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="keywords" content="intense web design multipurpose template html">
+    <meta name="date" content="Dec 26">
+    <link rel="icon" href="/Templates/default/cn/images/favicon.ico" type="image/x-icon">
+    <!-- Stylesheets-->
+    <link rel="stylesheet" href="/Templates/default/cn/css/style.css">
+    <link rel="stylesheet" href="/Templates/default/cn/css/toastr.min.css">
+    <link rel="stylesheet" type="text/css" href="/Templates/default/cn/css/yipak.css">
+    <script src="/Templates/default/cn/scripts/lib/json2.js"></script>
+    <script src="/Templates/default/cn/scripts/lib/knockout-3.1.0.js"></script>
+    <!--[if lt IE 10]>
+    <div style="background: #212121; padding: 10px 0; box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3); clear: both; text-align:center; position: relative; z-index:1;"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="images/ie8-panel/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
+    <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <!-- Page-->
+    <div class="page text-center">
+      {lw:include file="public/header.html"}
+      <!-- Classic Breadcrumbs-->
+      <section style="background: url(/Templates/default/cn/images/intense/banner.png) center top no-repeat;" class="yipak_banner">
+        <div class="shell">
+          <div class="range range-lg-middle cell-xs-6 cell-md-12">
+            <div class="small">
+              <ul class="list-inline list-inline-dashed p">
+                <li><a href="/">Home</a></li> » 
+                {lw:global.navigation}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Page Content-->
+      <main class="page-content section-10">
+        <section>
+          <div class="shell">
+            <h1>Contact Us</h1>
+            <hr class="divider bg-mantis">
+          </div>
+          <!-- Contact Us-->
+          {lw:about}
+			<input type="hidden" id="docid" value="{lw:field.docid}">
+          <section>
+            <div class="shell-fluid">
+              <div class="range range-xs-center text-sm-left offset-top-50">
+                <div class="cell-xs-10 cell-sm-8 cell-md-8 cell-xl-6 text-left">
+                  <p>We are China manufacturer of Medical Hospital CSSD Sterililization Products ,but with advanced quality & Supplying products of Global Standards !</p>
+                </div>
+              </div>
+              <div class="range range-xs-center text-sm-left offset-top-50">
+                <div class="cell-xs-10 cell-sm-8 cell-md-8 cell-lg-5 cell-xl-4">
+                  <!-- RD Mailform-->
+                  <form data-bind="submit:messageClick">
+                    <div class="range">
+                      <div class="cell-lg-6">
+                        <div class="form-group">
+                          <label class="form-label" for="contact-me-name">Name</label>
+                          <input class="form-control" id="contact-me-name" type="text" name="name" data-constraints="@Required" data-bind="value: form.name">
+                        </div>
+                      </div>
+                      <div class="cell-lg-6 offset-top-20 offset-lg-top-0">
+                        <div class="form-group">
+                          <label class="form-label" for="contact-me-phone">Cell</label>
+                          <input class="form-control" id="contact-me-phone" type="text" name="phone" data-constraints="@Required" data-bind="value: form.tel">
+                        </div>
+                      </div>
+                      <div class="cell-lg-12 offset-top-20 offset-lg-top-30">
+                        <div class="form-group">
+                          <label class="form-label" for="contact-me-email">E-Mail</label>
+                          <input class="form-control" id="contact-me-email" type="email" name="email" data-constraints="@Required @Email" data-bind="value: form.email">
+                        </div>
+                      </div>
+                      <div class="cell-lg-12 offset-top-20 offset-lg-top-30">
+                        <div class="form-group">
+                          <label class="form-label" for="contact-me-message">Message</label>
+                          <textarea class="form-control" id="contact-me-message" name="message" data-constraints="@Required" style="height: 150px;" data-bind="value: form.content"></textarea>
+                        </div>
+                      </div>
+                      <div class="cell-lg-3 offset-top-20 offset-lg-top-30">
+                        <div class="form-group">
+                          <label class="form-label" for="contact-me-email">Vcode</label>
+                          <input class="form-control" id="contact-me-email" type="text" name="vcode" data-constraints="@Required" data-bind="value: form.vcode">
+                        </div>
+                      </div>
+                      <div class="cell-lg-3 offset-top-20 offset-lg-top-30">
+                        <div class="form-group"><img src="/common/verificationcode" width="80" height="32" align="left" onclick="this.src='/common/verificationcode?r=' + Math.random();" /></div>
+                      </div>
+                    </div>
+                    <div class="range range-xs-center range-lg-left text-center text-lg-left offset-top-30">
+                      <div class="cell-xs-8 cell-sm-6">
+                      	<input type="hidden" data-bind="value: form.contentid" value="{lw:field.docid}">
+                        <button class="btn btn-lg btn-block btn-primary" type="submit">send message</button>
+                        <span data-bind="html: message"></span>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="cell-xs-10 cell-sm-8 cell-md-8 cell-lg-3 cell-xl-2 offset-top-50 offset-lg-top-0">
+                  <div class="inset-xl-right-20 text-center text-lg-left">
+                    <address class="contact-info reveal-sm-inline-block text-left">
+                      <div class="unit unit-spacing-sm unit-horizontal p">
+                        <div class="unit-left"><span class="icon icon-xxs fa fa-map-marker"></span></div>
+                        <div class="unit-body">#13, Liuji Industrial Park Yixiu District , Anqing , Anhui China.</div>
+                      </div>
+                      <div class="p unit unit-spacing-xs unit-horizontal offset-top-20">
+                        <div class="unit-left"><span class="icon icon-xxs fa fa-phone"></span></div>
+                        <div class="unit-body">+(86)0556-5202877/5209788</div>
+                      </div>
+                      <div class="p unit unit-spacing-xs unit-horizontal offset-top-10">
+                        <div class="unit-left"><span class="icon icon-xxs fa fa-envelope"></span></div>
+                        <div class="unit-body"><a href="mailto:info@yirenpak.com">info@yirenpak.com</a></div>
+                      </div>
+                    </address>
+                  </div>
+                  <div class="text-center text-lg-left offset-top-30">
+                              <ul class="list-inline">
+                                <li><a class="icon fa fa-facebook icon-xxs icon-circle icon-darkest-filled" href="#"></a></li>
+                                <li><a class="icon fa fa-twitter icon-xxs icon-circle icon-darkest-filled" href="#"></a></li>
+                                <li><a class="icon fa fa-google-plus icon-xxs icon-circle icon-darkest-filled" href="#"></a></li>
+                                <li><a class="icon fa fa-500px icon-xxs icon-circle icon-darkest-filled" href="#"></a></li>
+                                <li><a class="icon fa fa-behance icon-xxs icon-circle icon-darkest-filled" href="#"></a></li>
+                              </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          {/lw:about}	
+          <!-- Section RD Google Map-->
+          <section class="offset-top-98">
+                      <!-- RD Google Map-->
+                      <div class="rd-google-map">
+                      	<iframe src="http://www.google.cn/maps/embed?pb=!1m18!1m12!1m3!1d13734.15657572488!2d116.95327023823607!3d30.618759672840252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x343390380602dcd1%3A0xd6016e0718fa5e3b!2sLiujiaju%2C+Yixiu%2C+Anqing%2C+Anhui!5e0!3m2!1sen!2scn!4v1525937585155?hl=en" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+                      </div>
+          </section>
+        </section>
+      </main>
+      <!-- Page Footers-->
+      {lw:include file="public/footer.html"}
+    </div>
+   <!-- JavaScript-->
+    <script src="/Templates/default/cn/js/core.min.js"></script>
+    <script src="/Templates/default/cn/js/script.js"></script>
+    <script type="text/javascript" src="/Templates/default/cn/scripts/model/article.js"></script>
+    <script type="text/javascript" src="/Templates/default/cn/scripts/toastr.min.js"></script>
+    </body>
+</html>

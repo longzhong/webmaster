@@ -1,0 +1,15 @@
+F:\baiduyundownload\LONG.Web\LONG.Net\LONG.Bin\LONG.WorkFlow.dll
+F:\baiduyundownload\LONG.Web\LONG.Net\LONG.Bin\LONG.WorkFlow.pdb
+F:\baiduyundownload\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.csprojResolveAssemblyReference.cache
+F:\baiduyundownload\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.dll
+F:\baiduyundownload\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.pdb
+D:\项目\LONG.Web\LONG.Net\LONG.Bin\LONG.WorkFlow.dll
+D:\项目\LONG.Web\LONG.Net\LONG.Bin\LONG.WorkFlow.pdb
+D:\项目\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.csprojResolveAssemblyReference.cache
+D:\项目\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.dll
+D:\项目\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.pdb
+D:\项目开发\LONG.Web\LONG.Net\LONG.Bin\LONG.WorkFlow.dll
+D:\项目开发\LONG.Web\LONG.Net\LONG.Bin\LONG.WorkFlow.pdb
+D:\项目开发\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.csprojResolveAssemblyReference.cache
+D:\项目开发\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.dll
+D:\项目开发\LONG.Web\LONG.Net\LONG.WorkFlow\obj\Debug\LONG.WorkFlow.pdb

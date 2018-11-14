@@ -1,0 +1,46 @@
+﻿@{
+    Layout = null;
+}
+<script type="text/javascript">
+	var forum_input_err = "姓名、内容或其它填写错误，请返回重新填写！";
+	var seccode_empty = "验证码输入错误或为空，请重新输入！";
+	var email_err = "错误：E-mail为空或者格式错误";
+</script>
+<form name="messformsave" method="post" action="http://localhost:90/espcms/index.php?ac=messmain&at=save" onSubmit="return messform('1')">
+	<input type="hidden" name="userid" value=""/>
+	<input type="hidden" name="did" value="32"/>
+	<input type="hidden" name="lng" value="cn"/>
+	<input type="hidden" name="tokenkey" value="3e07e406ab60c7b82b906c197cd2424a"/>
+	<div class="espcms_bbs_form pt20">
+		<b class="b1"></b><b class="b2"></b><b class="b3"></b><b class="b4"></b>
+		<div class="title"><div class="messageicon"></div><div class="messtitle">网站留言</div></div>
+		<div class="content">
+			<div class="espcms_form_group">
+				<label for="username" class="control_label">姓名</label>
+				<div class="control_required"><input type="text" name="name" id="name" class="col5 infoInput"/></div>
+			</div>
+			<div class="espcms_form_group">
+				<label for="username" class="control_label">Email</label>
+				<div class="control_required"><input type="text" name="email" id="email" class="col5 infoInput"/></div>
+			</div>
+			<div class="espcms_form_group">
+				<label for="content" class="control_label">内容</label>
+				<div class="control_required">
+					<textarea name="content" id="content" rows="6" class="col11 infoInput"></textarea>
+				</div>
+			</div>
+						<div class="espcms_form_group">
+				<label for="username" class="control_label">验证码</label>
+				<div class="control_required">
+					<input type="text" id="seccode" name="seccode" class=" infoInput" maxlength="4" size="5" style="text-transform: uppercase;"/>
+					<img title="点击更换验证码" id="memberseccodesrc" onclick="sessionimg('memberseccodesrc', 'http://localhost:90/espcms/')" src="http://localhost:90/espcms/public/seccode.php" style="cursor: pointer;height:28px;margin-left:5px;" align="absmiddle"/>
+				</div>
+			</div>
+						<div class="espcms_form_group">
+				<label class="control_label"> </label>
+				<div class="control_required"><input type="submit" id="submit" class="button blue2" value="确认提交"> </div>
+			</div>
+		</div>
+		<b class="b5"></b><b class="b6"></b><b class="b7"></b><b class="b8"></b>
+	</div>
+</form>

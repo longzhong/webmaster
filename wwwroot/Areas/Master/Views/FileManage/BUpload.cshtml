@@ -1,0 +1,166 @@
+﻿@using LONG.Models
+@{
+    ViewBag.Title = "BUpload";
+    Layout = "~/Areas/Master/Views/Shared/FileManageLayout.cshtml";
+    string upfile_pictype = Utility.GetConfig("upfile_pictype");
+    string upfile_filetype = Utility.GetConfig("upfile_filetype");
+    string upfile_pictypejs = string.Empty;
+    string upfile_filetypejs = string.Empty;
+    if (!string.IsNullOrEmpty(upfile_pictype)){
+        string[] upfile_pictypelist = upfile_pictype.Split('|');
+        upfile_pictypejs = "*." + string.Join(";*.",upfile_pictypelist);
+    }
+    if (!string.IsNullOrEmpty(upfile_filetype))
+    {
+        string[] upfile_filetypelist = upfile_filetype.Split('|');
+        upfile_filetypejs = "*." + string.Join(";*.", upfile_filetypelist);
+    }
+}
+<script type="text/javascript" src="/areas/master/scripts/swfupload.js"></script>
+<script type="text/javascript" src="/areas/master/scripts/swfuploaddb.js"></script>
+<script type="text/javascript" src="/areas/master/scripts/batupfile.js"></script>
+<script type="text/javascript" language="JavaScript">
+    var js_upfile_zoomsize = "抱歉：图片尺寸无效或填写错误，请填写整数型";
+    var js_upfile_driname_err = "抱歉：未选择上传文件，请返回重新选择！";
+    var js_upfile_ok = "恭喜：文件上传成功!";
+    var js_upfile_no = "抱歉：文件上传失败，请检查文件是否拥有可写权限或文件无效!";
+    var fheight = "405";
+    $(window).load(function () {
+        var h = parseInt(fheight);
+        $('#mainwindowhidden').css({ height: h - 39 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse
+        }
+        $('#upfile').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+    });
+    function saveResponse(options) {
+        var opt = JSON.parse(options);
+    }
+    function formverify(formData, jqForm, options) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['upfilepath'] == '') {
+            document.upfile.upfilepath.focus();
+            parent.basic_alert(js_upfile_driname_err);
+            return false;
+        }
+    }
+
+    $(function () {
+        $('#swfupload-control').each(function () {
+
+            $(this).swfupload({
+
+                upload_url: "/Master/FileManage/BatchUploadFile?filetype=@ViewBag.filetype",
+                file_post_name: "Filedata",
+                post_params: {
+                    "ASPSESSID": "@Session.SessionID"
+                },
+                file_size_limit: "2000000",
+                @{
+                    if(ViewBag.filetype == "img"){
+                    @:file_types: "@upfile_pictypejs",
+                    }else if(ViewBag.filetype == "file"){
+                    @:file_types: "@upfile_filetypejs",
+                    }
+                }
+
+                file_types_description: "All Files",
+
+                file_upload_limit: "10",
+
+                flash_url: "/areas/master/scripts/swfupload.swf",
+
+                button_image_url: '/areas/master/scripts/upfilebotton.png',
+                button_width: 110,
+                button_height: 34,
+                button_cursor: SWFUpload.CURSOR.HAND,
+                button_placeholder: $('.button', this)[0],
+                debug: false
+            });
+
+        });
+    });
+
+    document.oncontextmenu = new Function('event.returnValue=false;');
+    document.onselectstart = new Function('event.returnValue=false;');
+</script>
+<!--[if IE 6]>
+<style type="text/css" media="screen">
+body { behavior:url("templates/css/csshover.htc");}
+</style>
+<![endif]-->
+
+<input type="hidden" name="maxupfile" value="10"/>
+<form name="upfile" id="upfile" method="post" enctype="multipart/form-data" action="@Url.Action("BatchUploadFile", new { filetype = ViewBag.filetype })">
+<div class="centerrightwindow" id="swfupload-control">
+	<div id="mainwindowhidden">
+        @{
+            if(ViewBag.filetype == "img"){
+            <div id="select" class="windowselecttop">
+			    <div class="col-xs-2 pl0">
+                    <select size="1" name="amid" id="amid" class="form-control">
+                        <option value="0">请选择所属相册</option>
+                        @{
+                List<sys_album_type> atype = new sys_album_typeService().SelectType();
+                foreach (var at in atype)
+                {
+                    <option value="@at.id">@at.title</option>
+                }
+                        }
+                    </select>
+                </div>
+                <div class="col-xs-2 pl0">
+                    <select size="1" name="img_iswater" id="img_iswater" class="form-control">
+                        <option value="0" selected>不添加水印</option>
+                        <option value="1">添加文字水印</option>
+                        <option value="2">添加图片水印</option>
+                    </select>
+                </div>
+                <div class="col-xs-2 pl0">
+                    <select size="1" name="isnewname" id="isnewname" class="form-control">
+                        <option value="0">改名</option>
+                        <option value="1">不改名</option>
+                    </select>
+                </div>
+            </div>
+            }    
+        }
+        <div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="padding-left5 colorgorningage">允许上传的文件格式有@(ViewBag.filetype == "img"?Utility.GetConfig("upfile_pictype"):Utility.GetConfig("upfile_filetype"))，选择的文件大小不超过@(Utility.CountSize(Utility.GetConfig("upfile_maxsize")))，批量上传的文件数不能超过10 个</span></span>
+		</div>
+		<div class="sugtitle-line"></div>
+		<div class="listitle">
+			<table border="0" width="100%" bordercolor="#FFFFFF">
+				<tr>
+					<td width="70%">文件名</td>
+					<td width="20%">上传状态</td>
+					<td width="10%">操作</td>
+				</tr>
+			</table>
+		</div>
+		<div class="loadingdiv" id="log"></div>
+	</div>
+    <div id="downbotton">
+		<div id="subbotton">
+			<table width="100%" border="0">
+				<tbody><tr id="bottonsubmit">
+					<td id="center">
+						<table border="0" style="margin: 0 auto;">
+							<tbody><tr>
+								<td><input type="button" class="button"/></td>
+								<td style="padding:0px 5px 0px 5px;"><input type="submit" title="确认文件上传" class="btn btn-primary" value="确认文件上传" id="submitbotton" name="Submit"></td>
+								<td><input type="reset" title="返回编辑窗口" class="btn btn-default" value="返回编辑窗口" id="release" onclick="javascript: parent.resetwindow();" name="reset"></td>
+							</tr>
+						</tbody></table>
+					</td>
+				</tr>
+			</tbody></table>
+		</div>
+	</div>	
+</div>
+</form>

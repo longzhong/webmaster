@@ -1,0 +1,99 @@
+﻿@using LONG.Web.Areas.Master.Common;
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>
+    欢迎登录-内容管理系统
+</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="stylesheet" href="/Areas/Master/Themes/styles/app.min.css" type="text/css">
+<link href="/Areas/Master/Themes/css/toastr.css" rel="stylesheet" type="text/css" />
+<script src="/Areas/Master/Scripts/jquery-1.8.1.min.js"></script>
+<script src="/Areas/Master/Scripts/json2.js"></script>
+<script src="/Areas/Master/Scripts/toastr.js"></script>
+<script src="/Areas/Master/Scripts/knockout-3.1.0.js"></script>
+<script src="/Areas/Master/Scripts/viewModel/login.js"></script>
+<style type="text/css">
+    .browser {
+    padding: 10px 0;
+    }
+
+    .browser li {
+    float: left;
+    list-style: outside none none;
+    width: 153px;
+    }
+
+    .browser li img {
+        border: 0 none;
+        float: left;
+        height: 34px;
+        margin-right: 10px;
+        width: 34px;
+    }
+
+    .browser li span {
+        display: block;
+        font-size: 12px;
+        line-height: 12px;
+        color: #dedcdc;
+    }
+    .browser li a {
+        color: #dedcdc;
+    }
+    p {
+            color:#dedcdc;
+    }    
+</style>
+</head>
+<body>
+    <div class="app layout-fixed-header bg-white usersession">
+        <div class="full-height">
+            <div class="center-wrapper">
+                <div class="center-content">
+                    <div class="row no-margin">
+                        <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+                            <form data-bind="submit: loginClick" class="form-layout">
+                                <div class="text-center mb15">
+                                    <img src="/Areas/Master/Themes/login/logo-dark.png">
+                                </div>
+                                <p class="text-center mb30">
+                                    欢迎您，请登录！
+                                </p>                                
+                                <div class="form-inputs">                                    
+                                    <div class="col-sm-12">
+                                        <input type="text" class="form-control input-lg" placeholder="帐号" data-bind="value: form.usercode">
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <input type="password" class="form-control input-lg" placeholder="密码" data-bind="value: form.password">
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control input-lg" placeholder="验证码" maxlength="4" data-bind="value: form.vcode">                                        
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <img src="@Url.Action("verificationcode","login")" onclick="this.src='@Url.Action("verificationcode","login")?r=' + Math.random();" width="100%" height="44" alt="点击刷新验证码" style="cursor: pointer;" />
+                                    </div>
+                                </div>
+                                <button class="btn btn-success btn-block btn-lg mb15" type="submit">
+                                    <span>
+                                        登 录
+                                    </span>
+                                </button>
+                                <p class="text-center">
+                                    &copy;2018 澎湃网络出品
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

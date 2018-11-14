@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{53937EBE-14DB-450D-B325-E1E263F1616C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LONG.WorkFlow</RootNamespace>
+    <AssemblyName>LONG.WorkFlow</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\LONG.Bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LONG.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\LONG.Bin\LONG.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Engine\BpmConfiguration.cs" />
+    <Compile Include="Engine\BpmContext.cs" />
+    <Compile Include="Engine\BpmContextData.cs" />
+    <Compile Include="Engine\BpmContextMembers.cs" />
+    <Compile Include="Engine\ProcessDefinition.cs" />
+    <Compile Include="Engine\ProcessDelegation.cs" />
+    <Compile Include="Enum\ActionType.cs" />
+    <Compile Include="Enum\AlertType.cs" />
+    <Compile Include="Enum\EunmConvert.cs" />
+    <Compile Include="Enum\EventType.cs" />
+    <Compile Include="Enum\FormType.cs" />
+    <Compile Include="Enum\InstanceType.cs" />
+    <Compile Include="Enum\LogicType.cs" />
+    <Compile Include="Enum\MsgState.cs" />
+    <Compile Include="Enum\NodeType.cs" />
+    <Compile Include="Enum\ProcessState.cs" />
+    <Compile Include="Enum\TaskState.cs" />
+    <Compile Include="Enum\TokenState.cs" />
+    <Compile Include="Excute\ActionInstance.cs" />
+    <Compile Include="Excute\ProcessInstance.cs" />
+    <Compile Include="Excute\TaskInstance.cs" />
+    <Compile Include="Excute\Token.cs" />
+    <Compile Include="Excute\TransitionInstance.cs" />
+    <Compile Include="Interface\IModel.cs" />
+    <Compile Include="Interface\ITask.cs" />
+    <Compile Include="Interface\ITaskInstance.cs" />
+    <Compile Include="Interface\IToken.cs" />
+    <Compile Include="Model\wf_processDefinition.cs" />
+    <Compile Include="Model\wf_processInstance.cs" />
+    <Compile Include="Model\wf_taskInstance.cs" />
+    <Compile Include="Model\wf_token.cs" />
+    <Compile Include="Model\wf_transitionInstance.cs" />
+    <Compile Include="Node\EventAction.cs" />
+    <Compile Include="Node\Node.cs" />
+    <Compile Include="Node\NodeReader.cs" />
+    <Compile Include="Node\Task.cs" />
+    <Compile Include="Node\TaskEventArgs.cs" />
+    <Compile Include="Node\TransEventArgs.cs" />
+    <Compile Include="Node\Transition.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Engine\BpmConfiguration.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

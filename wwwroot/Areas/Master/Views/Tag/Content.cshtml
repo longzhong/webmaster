@@ -1,0 +1,107 @@
+﻿@using LONG.Models
+@{
+    ViewBag.Title = "Content";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        var w = $(window).width();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h });
+        }
+    }
+ 
+    $(document).ready(function () {
+        new CBPFWTabs(document.getElementById('tabs'));
+        var h = $(window).height();
+        //$("#tabcontent").organicTabs({
+        //    "speed": 100,
+        //});
+        $('.managebottonadd').css({ height: h });
+        
+    })
+</script>
+<form name="setting" id="setting" method="post" action="">
+<div id="mainbodybottonauto" class="managebottonadd">
+    <div class="maindobycontent">
+        <!--查看已选择的类型-->
+        <div class="suggestion">
+            <span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下选项中修改系统相关参数</span></span>
+        </div>
+        <div id="tabs" class="tabs">
+            <nav>
+                <ul>
+                    @{
+                                List<sys_category> clist = new sys_categoryService().SelectList(20, true);
+                                int i = 1;
+                                int j = clist.Count();
+                                foreach (var cl in clist)
+                                {
+                                    <li><a href="#section-@i">@cl.title</a></li>
+                                    i++;
+                                }
+                    }
+                </ul>
+            </nav>
+            <div class="content">
+                @{
+                    int k = 1;
+                    foreach (var cl in clist)
+                    {
+                        <section id="section-@k">
+                            <table class="formtable">
+                                @(new MvcHtmlString(new sys_configService().ShowConfigValue(cl.id.ToString())))
+                            </table>
+                        </section>
+                        k++;
+                    }
+                }
+            </div>
+        </div>
+
+                    @*<div id="tabcontent">
+                        <ul class="nav">
+                            @{
+                                List<sys_category> clist = new sys_categoryService().SelectList(20, true);
+                                int i = 1;
+                                int j = clist.Count();
+                                foreach (var cl in clist)
+                                {
+                                    <li@(i = =j?" class=last":"")>
+                                        <a href="#tabcontentdiv@(i)" @(i= =1?" class=current":"")>@cl.title</a></li>
+                                    i++;
+                                }
+                            }
+                    </ul>
+                    <div class="list-wrap">
+                        @{
+                            int k = 1;
+                            foreach (var cl in clist)
+                            {
+                                <ul id="tabcontentdiv@(k)" @(k !=1 ?" class=hide":"")>
+                                    <li>
+                                        <table class="formtable">
+                                            @(new MvcHtmlString(new sys_configService().ShowConfigValue(cl.id.ToString())))
+                                        </table>
+                                    </li>
+                                </ul>
+                                k++;
+                            }
+                        }
+                    </div>
+                </div>*@
+    </div>
+</div>
+</form>

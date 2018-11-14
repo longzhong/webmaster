@@ -1,0 +1,18 @@
+<dl>
+				<dt><strong>工程案例</strong></dt>
+				<dd>
+					<div class="aside-category">
+						<ul>
+							{lw:category type="son" cid="66"}
+							<li{if key="{field.dirname}" val="{currentpage}" mod="equals"} class="current"{/if}><i class="fa fa-angle-double-right"></i><a href="/{field.linkurl}">{field.title}</a>
+								<ul>
+									{lw:children cid="{field.cid}"}
+									<li{if key="{child.dirname}" val="{currentpage}" mod="equals"} class="current"{/if}><i class="fa fa-angle-right"></i><a href="/{child.linkurl}">{child.title}</a></li>
+									{/lw:children}
+								</ul>
+							</li>
+							{/lw:category}     	               
+						</ul>
+					</div>
+				</dd>
+			</dl>

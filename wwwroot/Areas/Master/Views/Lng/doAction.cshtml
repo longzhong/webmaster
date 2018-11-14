@@ -1,0 +1,170 @@
+﻿@model LONG.Models.sys_lng
+@{
+    ViewBag.Title = "doAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_lng_empty = "语言标识符填写错误，请检查是否为空或填写是否正确！";
+    var js_lngtitle_empty = "语言名称填写错误，请检查是否为空或填写是否正确！";
+    var js_url_err = "绑定域名格式有误，请在域名前加上http://，例如:http://en.your.cn";
+    var js_packname_err = "文件夹名称填写错误，请填写英文字符!";
+    var js_add_ok = "恭喜！语言添加成功！";
+    var js_add_no = "抱歉！语言添加失败！";
+    var lngcode_yes = "可以使用";
+    var lngcode_no = "已存在";
+    var iframename = "@ViewBag.iframename";
+    iframename = iframename == '' ? "jerichotabiframe_0" : iframename;
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+
+            beforeSubmit: formverify,
+
+            success: saveResponse,
+            resetForm: true
+        }
+        $('#lngadd').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+    })
+
+    function formverify(formData) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['lng'] == "") {
+            document.lngadd.lng.focus();
+            parent.basic_alert(js_lng_empty);
+            return false;
+        }
+        if (get['lng'].match(/^[a-zA-Z.0-9]{1}[a-zA-Z.0-9]{1,19}$/ig) == null) {
+            document.lngadd.lng.focus();
+            parent.basic_alert(js_lng_empty);
+            return false;
+        }
+        if (get['title'] == "") {
+            document.lngadd.title.focus();
+            parent.basic_alert(js_lngtitle_empty);
+            return false;
+        }
+        if (get['url'] != "") {
+
+            if (get['url'].match(/^http:\/\/[a-zA-Z.0-9/_]+$/ig) == null) {
+                document.lngadd.url.focus();
+                parent.basic_alert(js_url_err);
+                return false;
+            }
+        }
+        //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+    }
+    function saveResponse(options) {
+        //parent.closeifram();
+        if (options == true) {
+            if (parent.frames[iframename].document.getElementById("selectform")) {
+                    parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+                }
+            parent.success_alert(js_add_ok);
+        } else {
+            parent.error_alert(js_add_no);
+        }
+        parent.onaletdoc()
+    }
+
+    function checkcode() {
+        var lngadd = document.getElementById("lngvalue").value;
+        if (lngadd == "") {
+            return false;
+        }
+        var um = document.getElementById('codeerr');
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("CheckLng", new { delid = Model.id })",
+            data: "lng=" + lngadd,
+            success: function (data) {
+                if (data == false) {
+                    um.innerHTML = "<font color=\"red\">" + lngcode_no + "</font>";
+                    $('#submitbotton').attr('disabled', 'true');
+                } else {
+                    um.innerHTML = "<font color=\"#1CB521\">" + lngcode_yes + "</font>";
+                    $('#submitbotton').attr('disabled', '');
+                }
+            }
+        });
+
+    }
+</script>
+<form name="lngadd" id="lngadd" method="post" action="@ViewBag.actionURL">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中输入要添加的语言属性</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle2">
+						<td class="trtitle011">语言标识符</td>
+						<td class="trtitle02"><input type="text" name="lng" id="lngvalue" size="25" maxlength="20" class="infoInput" onblur="checkcode();" value="@Model.lng"/> <span id="codeerr" class="cautiontitle">请输入纯英文字符，长度不能小于2位</span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle011">语言名称</td>
+						<td class="trtitle02"><input type="text" name="title" size="25" maxlength="50" value="@Model.title" class="infoInput"/> <span class="cautiontitle">请输入长度不能大于50的任意字符</span></td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">绑定域名</td>
+						<td class="trtitle02"><input type="text" name="url" size="50" maxlength="100" value="@Model.url" class="infoInput"/> <span class="cautiontitle">域名前请务必加上“http://”，如未绑定则按默认域名生成网页</span></td>
+					</tr>                    
+					<tr class="trstyle2">
+						<td class="trtitle01">默认版本</td>
+						<td class="trtitle02">
+							<input type="radio" value="true" name="isdefault"@(ViewBag.act=="add"||Model.isdefault == true?" checked":"")/> 是&nbsp;
+							<input type="radio" value="false" name="isdefault"@(Model.isdefault == false?" checked":"")/> 否<span class="cautiontitle">如已设置其它语言为默认，则以这次为准</span>
+						</td>
+					</tr>
+					<tr class="trstyle2 displaynone">
+						<td class="trtitle01">3G-WAP显示</td>
+						<td class="trtitle02">
+							<input type="radio" value="true" name="iswap"@(ViewBag.act=="add"||Model.iswap == true?" checked":"")/> 启用&nbsp;
+							<input type="radio" value="false" name="iswap"@(Model.iswap == false?" checked":"")/> 关闭							<span class="cautiontitle">启用WAP后，可以通过手机等3G设备访问该内容</span>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">是否启用</td>
+						<td class="trtitle02">
+							<input type="checkbox" name="isenable" value="true"@(Model.isenable == true || ViewBag.act == "add" ? " checked=checked" : "")> 启用&nbsp;							<span class="cautiontitle">启用WAP后，可以通过手机等3G设备访问该内容</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td id="right"><input type="submit" id="submitbotton" name="Submit" value="确认添加" class="btn btn-primary mr10" /></td>
+				<td id="left"><input type="button" name="cancel" onclick="javascript: parent.onaletdoc();" value="取消添加" class="btn btn-default" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

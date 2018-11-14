@@ -1,0 +1,200 @@
+﻿@using LONG.Models
+@using LONG.Web
+@model LONG.Models.adverts
+@{
+    ViewBag.Title = "doAction";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var js_atid_empty = "请选择广告位";
+    var js_title_empty = "广告名称填写错误";
+    var js_url_empty = "跳转地址填写错误";
+    var js_url_gotoid = "请填写关联内容ID";
+    var js_filename_empty = "请上传广告文件";
+    var js_add_ok = "恭喜！广告添加成功！";
+    var js_add_no = "抱歉！广告添加失败！";
+    var iframename = "@ViewBag.iframename";
+    iframename = iframename == '' ? "jerichotabiframe_0" : iframename;
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse,
+            resetForm: false
+        }
+        $('#infosave').submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+    })
+
+    function formverify(formData) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['category'] == 0) {
+            document.infosave.category.focus();
+            parent.basic_alert(js_atid_empty);
+            return false;
+        }
+        if (get['title'] == '') {
+            document.infosave.title.focus();
+            parent.basic_alert(js_title_empty);
+            return false;
+        }
+        if (get['islink'] == true) {
+            if (get['gotoid'].match(/^[1-9][0-9]*$/ig) == null) {
+                document.infosave.gotoid.focus();
+                parent.basic_alert(js_url_gotoid);
+                return false;
+            }
+        } else {
+            if (get['linkurl'] != '') {
+                if (get['linkurl'].match(/^http:\/\/[a-zA-Z\:.0-9-%@('@')#;&?=/_]+$/ig) == null) {
+                    document.infosave.linkurl.focus();
+                    parent.basic_alert(js_url_empty);
+			    return false;
+			}
+        }
+    }
+    if (get['imgurl'] == '') {
+        parent.basic_alert(js_filename_empty);
+        return false;
+    }
+    //parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+}
+function saveResponse(options) {
+    //parent.closeifram();
+    if (options == true) {
+        if (parent.frames[iframename].document.getElementById("selectform")) {
+            parent.frames[iframename].refresh('selectform', 'selectall', 'check_all');
+        }
+        parent.success_alert(js_add_ok);
+    } else {
+        parent.error_alert(js_add_no);
+    }
+    parent.onaletdoc()
+
+}
+</script>
+<form name="infosave" id="infosave" method="post" action="@ViewBag.actionURL">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中填写广告内容的基本属性</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle2">
+						<td class="trtitle01">所属广告位</td>
+						<td class="trtitle02">
+							<div class="col-xs-2 pl0">
+                                <select id="category" name="category" size="1" class="form-control">
+                                    <option value="0">请选择关联分类</option>
+                                    @(new MvcHtmlString(new sys_categoryService().OptionList(12, Model.category == null ? 0 : Model.category, false)))
+                                </select>
+                            </div>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">广告名称</td>
+						<td class="trtitle02">
+							<input type="text" name="title" size="60" maxlength="80" class="infoInput" value="@Model.title"/>
+							<span class="cautiontitle">请输入长度不能大于80的任意字符</span>
+						</td>
+					</tr>
+                    <tr class="trstyle2 displaynone">
+                        <td width="15%" class="trtitle01">跳转目标</td>
+                        <td width="85%" class="trtitle02">
+                            <input type="radio" value="true" name="islink" onclick="ondisplayother('urllink1', 'trstyle2 displaytrue', 'urllink2', 'trstyle2 displaynone');" @( Model.islink == true ? " checked" : "") /> 关联内容ID&nbsp;
+                            <input type="radio" value="false" name="islink" onclick="ondisplayother('urllink1', 'trstyle2 displaynone', 'urllink2', 'trstyle2 displaytrue')" @(ViewBag.act == "add" || Model.islink == false ? " checked" : "") /> 外网							<span class="cautiontitle">如果关联内容ID，请选择一篇链接内容进行关联！</span>
+                        </td>
+                    </tr>
+					<tr class="trstyle2 displaynone" id="urllink1">
+						<td width="15%" class="trtitle01">关联内容ID</td>
+						<td width="85%" class="trtitle02">
+							<input type="text" name="gotoid" id="gotoid" value="@Model.gotoid" size="10" maxlength="10" class="infoInput"/>
+							<a class="filecheck" href="#body" onclick="javascript:parent.windowsdig('关联内容','iframe:@Url.Action("SelectList", "Content", new { getbyid = "gotoid", checkfrom = "input", inputtext = "gotoid", maxselect = 1})&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),'800px','400px','iframe');">选择内容</a>
+						</td>
+					</tr>
+					<tr class="trstyle2" id="urllink2">
+						<td class="trtitle01">广告跳转地址</td>
+						<td class="trtitle02">
+							<input type="text" name="linkurl" value="@(ViewBag.act == "add" || Model.linkurl == null ? "http://":Model.linkurl)" size="60" maxlength="185" class="infoInput"/>
+							<span class="cautiontitle">请输入广告跳转地址，并以http：//开头</span>
+						</td>
+					</tr>
+					<tr class="trstyle2" id="filenamestr">
+						<td class="trtitle01">广告文件</td>
+						<td class="trtitle02" id="strhtml">
+							<ul class="addpiclist">
+								<li id="addsrlipic"><a title="选择文件" onclick="javascript:parent.windowsdig('选择文件','iframe:@Url.Action("Index", "FileManage", new { getbyid = "addsrlipic", fileinputid = "imgurl", checkfrom = "picshow", filetype = "img", maxselect = 1})&iframename='+self.frameElement.getAttribute('name'),'900px','480px','iframe')" href="#body"><p><img id="addsrcpic" src="@(Model.imgurl == null?"/areas/master/themes/images/pic.png":Model.imgurl)" height="100"></p></a></li>
+							</ul>
+							<input type="hidden" name="imgurl" id="imgurl" value="@Model.imgurl" size="50" maxlength="50" class="infoInput"/>
+						</td>
+					</tr>
+                    <tr class="trstyle2 displaynone">
+						<td class="trtitle01">时间限制</td>
+						<td class="trtitle02">
+							<input type="radio" onclick="showdiv(1, '#starttimediv|#endtimediv', '0|1', 'trstyle2 hidden|trstyle2 show', 1, 1)"@(Model.isdate == true ? " checked" : "") name="isdate" value="true"> 启用&nbsp;
+							<input type="radio" onclick="showdiv(0, '#starttimediv|#endtimediv', '0|1', 'trstyle2 hidden|trstyle2 show', 1, 1)"@(ViewBag.act == "add" || Model.isdate == false ? " checked" : "") name="isdate" value="false"> 关闭							<span class="cautiontitle">如果启用时间限制，会按以下时间段进行显示</span>
+						</td>
+					</tr>
+                    <tr id="starttimediv" class="trstyle2@(ViewBag.act == "add" || Model.isdate == false ? " displaynone":"")">
+						<td class="trtitle01">广告投放开始时间</td>
+						<td class="trtitle02">
+							<input type="text" name="startdate" size="20" maxlength="30" id="startdate" value="@(ViewBag.act == "add" ? DateTime.Now : Model.startdate)" class="infoInput"/>
+							<a class="datetime" onclick="WdatePicker({el:'startdate',isShowClear:false,readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss'})" href="#body">选择日期</a>
+						</td>
+					</tr>
+                    <tr id="endtimediv" class="trstyle2@(ViewBag.act == "add" || Model.isdate == false ? " displaynone":"")">
+						<td class="trtitle01">广告投放结束时间</td>
+						<td class="trtitle02">
+							<input type="text" name="enddate" size="20" maxlength="30" id="enddate" value="@(ViewBag.act == "add" ? DateTime.Now : Model.enddate)" class="infoInput"/>
+							<a class="datetime" onclick="WdatePicker({el:'enddate',isShowClear:false,readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss'})" href="#body">选择日期</a>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">广告描述</td>
+						<td class="trtitle02"><textarea name="intro" id="intro" class="form-control">@Model.intro</textarea></td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">是否启用</td>
+						<td class="trtitle02">
+							<input type="checkbox" name="isenable" value="true"@(Model.isenable == true || ViewBag.act == "add" ? " checked=checked" : "")> 启用
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td id="right"><input type="submit" id="submitbotton" name="Submit" value="保存" class="btn btn-primary mr10" /></td>
+				<td id="left" class="padding-left5"><input type="button" name="cancel" onclick="javascript: closewindow();" value="取消" class="btn btn-default" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

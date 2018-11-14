@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Master/Views/Shared/PageListLayout.cshtml";
+}
+<div id="mainlistbotton">
+<ul class="listbottonul" id="listbottonul">
+	@Html.Partial("ButtonListByModel")
+</ul>
+</div>
+<div class="listitle">
+<table border="0" width="100%" bordercolor="#FFFFFF">
+	<tr>
+		<td width="4%"><input type="checkbox" name="check_all" id="check_all" value="1" onClick="select_ok('selectform','selectall','check_all');"/></td>
+		<td width="7%">排序</td>
+		<td width="7%">ID</td>
+		<td width="38%">分类名称</td>
+        @*<td width="12%">列表表现样式</td>*@
+        <td width="8%">所属模型</td>
+        <td width="8%">文章数量</td>
+		<td width="8%">状态</td>
+		<td width="8%">操作</td>
+	</tr>
+</table>
+</div>
+<div id="mainbody" class="tablist">
+	<form name="selectform" id="selectform" method="post">
+		<input type="hidden" name="loadurl" id="loadurl" value="@Url.Action("PageList", new { modelid = ViewBag.modelid })">
+		<input type="hidden" name="maxperpage" id="maxperpage" value="20">
+		<input type="hidden" name="maxhit" id="maxhit" value="5">
+		<input type="hidden" name="nowpage" id="nowpage" value="0">
+		<input type="hidden" name="limitkey" id="limitkey" value="">
+		<input type="hidden" name="limitclass" id="limitclass" value="">
+		<input type="hidden" name="loadname" id="loadname" value="#loadingtabelist">
+		<input type="hidden" name="pagetextname" id="pagetextname" value="#pageinfo">
+		<input type="hidden" name="pagebottonname" id="pagebottonname" value="#Pagination">
+		<input type="hidden" name="oldloadurladd" id="oldloadurladd" value="@Url.Action("PageList", new { modelid = ViewBag.modelid })">			
+		<input type="hidden" name="pagelistcut" id="pagelistcut" value="1">
+		<div class="loadingdiv" id="loadingtabelist"></div>
+	</form>
+</div>
+<div class="pagelistdiv">
+	<div class="pageinfotext" id="pageinfo"></div>
+	<div class="pagebottonlist" id="pagebotton"><span id="Pagination" class="pagination"></span></div>
+</div>

@@ -1,0 +1,76 @@
+﻿@using LONG.Models
+@using LONG.Web.Areas.Master.Common
+@{
+    var usercode = SysHelper.GetUserCode();
+    int roleid = new sys_userService().GetRole(usercode);
+    string url = string.Empty;
+    if(ViewData["url"] == null){
+        url = Url.Action("index");
+    }else{
+        url = ViewData["url"].ToString();
+    }
+    string buttons = new sys_role_powerService().ButtonPower(url, roleid);
+    //System.Diagnostics.Debug.WriteLine("buttons:" + buttons);
+    if(!string.IsNullOrEmpty(buttons))
+    {
+        string[] types = new string[] { "onbotton", "onbottondo", "callrun", "refresh", "sortinput", "windowsdig" };
+        sys_buttonService service = new sys_buttonService();
+        if(buttons.IndexOf(',')>0)
+        {
+            //more action
+            string[] actions = buttons.Split(',');
+            foreach(var act in actions)
+            {
+                    sys_button button = service.Query(act);
+                    switch(button.type)
+                    {
+                        case "onbotton":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" onclick="javascript:parent.onbotton('@button.title','@Url.Action(button.action)@button.param&modelid=@ViewBag.modelid&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),false,'addinfo',self.frameElement.getAttribute('name'));" href="#body" title="@button.title" hidefocus="true"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;
+                        case "onbottonlist":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" onclick="javascript:parent.onbottonlist('@button.title','@Url.Action(button.action,button.control)?modelid=@ViewBag.modelid&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),true,'addinfo',self.frameElement.getAttribute('name'),'selectinfoid','selectform','whoid','抱歉：您只能选择一条记录操作！');" href="#body" title="@button.title" hidefocus="true"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;
+                        case "onbottondo":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" onclick="javascript:parent.onbottondo('@button.title','@Url.Action(button.action)@button.param&modelid=@ViewBag.modelid&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),false,'editinfo',self.frameElement.getAttribute('name'),'selectinfoid','selectform','whoid','抱歉：您只能选择一条记录操作！');" href="#body" title="@button.title" hidefocus="true"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;
+                        case "callrun":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" onclick="javascript:callrun('@Url.Action(button.action)@button.param','selectinfoid',false,null,null,'@Url.Action("Loading","Common")','此操作将会导致数据更新，请确认该操作！','您未选择要操作的数据，请返回重新选择！',true,'恭喜：您此次操作已成功！','抱歉：您此次操作失败！','selectform','selectall','check_all');" href="#body" hidefocus="true"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;
+                        case "refresh":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" href="#body" onclick="javascript: refresh('selectform', 'selectall', 'check_all');" title="@button.title" hidefocus="true"><i class="fa @button.icon"></i><b>@button.title</b></a></li>
+                            break;
+                        case "sortinput":
+                            <li class="menumain main"><a hidefocus="true" class="btn btn-primary btn-sm mr5" title="@button.title" href="#body" onclick="javascript:sortinput('@Url.Action(@button.action)','@Url.Action("Loading","Common")','此操作将会改变数据顺序，请确认该操作！',true,'恭喜：您此次操作已成功！','抱歉：您此次操作失败！','selectform','selectall','check_all','infoid','sortid');"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;
+                        case "windowsdig":
+                            <li class="menumain main"><a hidefocus="true" class="btn btn-primary btn-sm mr5" title="@button.title" onclick="javascript:parent.windowsdig('@button.title','iframe:@Url.Action(button.action)?modelid=@ViewBag.modelid&iframename='+self.frameElement.getAttribute('name'),'600px','450px','iframe',true);" href="#body"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;                    
+                    }
+            }
+        }else{
+            //one action
+            sys_button button = service.Query(buttons);
+            switch(button.type)
+            {
+                        case "onbotton":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" onclick="javascript:parent.onbotton('@button.title','@Url.Action(button.action)@button.param&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),false,'addinfo',self.frameElement.getAttribute('name'));" href="#body" title="@button.title" hidefocus="true"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;
+                        case "onbottondo":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" onclick="javascript:parent.onbottondo('@button.title','@Url.Action(button.action)@button.param&freshid='+Math.random()+'&iframename='+self.frameElement.getAttribute('name'),false,'editinfo',self.frameElement.getAttribute('name'),'selectinfoid','selectform','whoid','抱歉：您只能选择一条记录操作！');" href="#body" title="@button.title" hidefocus="true"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;
+                        case "callrun":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" onclick="javascript:callrun('@Url.Action(button.action)@button.param','selectinfoid',false,null,null,'@Url.Action("Loading","Common")','此操作将会导致数据更新，请确认该操作！','您未选择要操作的数据，请返回重新选择！',true,'恭喜：您此次操作已成功！','抱歉：您此次操作失败！','selectform','selectall','check_all');" href="#body" hidefocus="true"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;
+                        case "refresh":
+                            <li class="menumain"><a class="btn btn-primary btn-sm mr5" href="#body" onclick="javascript:refresh('selectform','selectall','check_all');" title="@button.title" hidefocus="true"><i class="fa @button.icon"></i><b>@button.title</b></a></li>
+                            break;
+                        case "sortinput":
+                            <li class="menumain main"><a hidefocus="true" class="btn btn-primary btn-sm mr5" title="@button.title" href="#body" onclick="javascript:sortinput('@Url.Action(@button.action)','@Url.Action("Loading","Common")','此操作将会改变数据顺序，请确认该操作！',true,'恭喜：您此次操作已成功！','抱歉：您此次操作失败！','selectform','selectall','check_all','infoid','sortid');"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break; 
+                        case "windowsdig":
+                            <li class="menumain main"><a hidefocus="true" class="btn btn-primary btn-sm mr5" title="@button.title" onclick="javascript:parent.windowsdig('@button.title','iframe:@Url.Action(button.action)?modelid=@ViewBag.modelid&iframename='+self.frameElement.getAttribute('name'),'600px','450px','iframe',true);" href="#body"><i class="fa @button.icon"></i>@button.title</a></li>
+                            break;  
+            }
+        }
+    }
+ }

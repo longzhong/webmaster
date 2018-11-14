@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>@ViewBag.Title</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />  
+<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />  
+<meta name="keywords" content="@ViewBag.keywords" />
+<meta name="description" content="@ViewBag.description" />
+@Scripts.Render("~/bundles/jquery")
+@RenderSection("scripts", required: false)
+@Styles.Render("~/themes/css")
+@RenderSection("css", required: false)
+<script type="text/javascript">
+	$(window).load(function() {
+		$("#clickmenubotton li span").hover(function() {
+			$(this).addClass("menuhover");
+			$(this).parent().find("ul.subnav").slideDown('fast').show();
+			$(this).parent().hover(function() {
+			}, function() {
+				$(this).parent().find("ul.subnav").fadeOut('fast');
+				$(this).parent().find("span").removeClass("menuhover");
+			});
+		});
+        @RenderSection("scripttxt", required: false)
+	});    
+</script>
+</head>
+<body>
+    @*@RenderPage("~/Views/Shared/_Header.cshtml")*@
+    @RenderBody()
+    @*@RenderPage("~/Views/Shared/_Footer.cshtml")*@    
+</body>
+</html>

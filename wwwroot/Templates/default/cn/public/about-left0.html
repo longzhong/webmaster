@@ -1,0 +1,12 @@
+<dl>
+				<dt><strong>{category.title}</strong></dt>
+				<dd>
+					<div class="aside-category">
+						<ul>
+							{lw:category type="son" cid="9"}
+							<li{if key="{field.dirname}" val="{currentpage}" mod="equals"} class="current"{/if}><i class="fa fa-angle-double-right"></i><a href="/{field.linkurl}">{field.title}</a></li>
+							{/lw:category}
+						</ul>
+					</div>
+				</dd>
+			</dl>

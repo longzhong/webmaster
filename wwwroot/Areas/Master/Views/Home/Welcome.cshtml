@@ -1,0 +1,294 @@
+﻿@using LONG.Core;
+@using LONG.Models;
+@using LONG.Web;
+@using LONG.Tool;
+@{
+    var loginer = FormsAuth.GetUserData<LoginerBase>();
+    sys_user user = new sys_userService().Query(loginer.UserCode);
+    int newscount = new documentsService().CategoryCount(1, null, null); //新闻总数
+    int productcount = new documentsService().CategoryCount(2, null, null); //产品总数
+    int messagecount = new messagesService().Count(null); //留言总数
+    int emailcount = new emailsService().Count(null); //留言总数
+    int newmessagecount = new messagesService().NewCount(); //未读留言
+    IEnumerable<sys_lng> lnglist = new sys_lngService().List();
+    string rolename = new sys_roleService().Query(user.roleid).rolename; //角色
+    int alltotal = new class_visitor().getAllCount(); //总访问量
+    int monthtotal = new class_visitor().getMonthCount(); //当月访问量
+    int todaytotal = new class_visitor().getTodayCount(); //当天访问量
+    int yesterdaytotal = new class_visitor().getYesterdayCount(); //昨天访问量
+    string path = HttpContext.Current.Server.MapPath("~//");
+    decimal dirsize = Tools.getDirectorySize(path, "MB"); //已使用空间
+    string Ver = Utility.GetAppSetting("Ver"); //版本号
+    string SystemName = Utility.GetAppSetting("SystemName"); //系统名称
+    string Author = Utility.GetAppSetting("Author"); //系统所有者
+    string Website = Utility.GetAppSetting("Website"); //官方网站
+    string QQ = Utility.GetAppSetting("QQ"); //销售QQ
+}
+<!doctype html>
+<html>
+<head>
+    <title>welcome</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/Areas/Master/Themes/styles/climacons-font.css">
+    <link rel="stylesheet" href="/Areas/Master/Themes/styles/app.min.css" type="text/css">
+    <link href="/areas/master/themes/css/index.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/areas/master/scripts/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="/areas/master/scripts/jquery.weather.js"></script>
+    <script type="text/javascript" src="/areas/master/themes/index/js/weather.js"></script>
+</head>
+<body>
+    <div class="app">
+        <div class="main-panel">
+            <div class="main-content mt10">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="widget bg-white no-padding">
+                            <a class="block text-center relative p15" href="javascript:;">
+                                <img alt="" class="avatar avatar-lg img-circle" src="@user.userface">
+                                <div class="h5 mb0">
+                                    <strong>
+                                        欢迎回来，@user.username
+                                    </strong>
+                                </div>
+                            </a>
+                            <div class="widget bg-primary mb0 text-center no-radius">
+                                <div class="widget-details">
+                                    <div class="h5 no-margin">
+                                        @(user.logincount)次
+                                    </div>
+                                    <div class="small bold text-uppercase">
+                                        您已经登录
+                                    </div>
+                                </div>
+                                <div class="widget-details">
+                                    <div class="h5 no-margin">
+                                        @user.lastlogindate
+                                    </div>
+                                    <div class="small bold text-uppercase">
+                                        上次登录时间
+                                    </div>
+                                </div>
+                                <div class="widget-details">
+                                    <div class="h5 no-margin">
+                                        @rolename
+                                    </div>
+                                    <div class="small bold text-uppercase">
+                                        管理员身份
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="widget bg-white" style="height:247px">
+                            <div class="p10 text-center">
+                                <h6 class="text-uppercase text-info">
+                                    当前系统授权用户：<strong>@Utility.GetConfig("sitename")</strong>&nbsp; &nbsp; &nbsp;
+                                    当前系统版本：<span class="btn btn-danger btn-xs btn-round">@Ver</span>
+                                </h6>
+                                <table width="100%" cellspacing="0" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="content-block">
+                                                <h1 class="text-primary">欢迎使用@(SystemName)</h1>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="content-block">
+                                                版权所有：@Author
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="content-block">
+                                                官方网站：@Website
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="content-block">
+                                                销售咨询QQ：@QQ
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="content-block">
+                                                Copyright &copy; @(DateTime.Now.Year). All rights reserved
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 col-md-3">
+                        <div class="widget bg-white">
+                            <div class="widget-icon bg-blue pull-left fa fa-sun-o">
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="widget-title">
+                                    @productcount
+                                </span>
+                                <span class="widget-subtitle">
+                                    当前产品总数
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8 col-md-3">
+                        <div class="widget bg-white">
+                            <div class="widget-icon bg-danger pull-left fa fa-newspaper-o">
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="widget-title">
+                                    @newscount
+                                </span>
+                                <span class="widget-subtitle">
+                                    当前新闻总数
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="col-sm-8 col-md-3">
+                        <div class="widget bg-white">
+                            <div class="widget-icon bg-success pull-left fa fa-comment">
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="widget-title">
+                                    @(emailcount)
+                                </span>
+                                <span class="widget-subtitle">
+                                    当前邮箱订阅数
+                                </span>
+                            </div>
+                        </div>
+                    </div>*@
+                    <div class="col-sm-6 col-md-3">
+                        <div class="widget bg-white">
+                            <div class="widget-icon bg-success pull-left fa fa-comment">
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="widget-title">
+                                    @(messagecount)<span class="btn btn-danger btn-round btn-xs pull-right">新@(newmessagecount)</span>
+                                </span>
+                                <span class="widget-subtitle">
+                                    当前留言总数
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8 col-md-3">
+                        <div class="widget bg-white">
+                            <div class="widget-icon bg-purple pull-left fa fa-cloud">
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="widget-title">
+                                    @(Math.Round(dirsize, 2).ToString())MB
+                                </span>
+                                <span class="widget-subtitle">
+                                    已使用空间
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+                <div class="row hidden">
+                    <div class="col-md-6">
+                        <section class="widget bg-brown text-center" id="weather">                            
+                        </section>
+                    </div>
+                    <div class="col-md-6">
+                        <section class="widget bg-success text-center">
+                            <div class="widget-details col-xs-3">
+                                <h2 class="no-margin">
+                                    @todaytotal
+                                </h2>
+                                <small class="text-uppercase">
+                                    今日访问
+                                </small>
+                            </div>
+                            <div class="widget-details col-xs-3">
+                                <h2 class="no-margin">
+                                    @yesterdaytotal
+                                </h2>
+                                <small class="text-uppercase">
+                                    昨日访问
+                                </small>
+                            </div>
+                            <div class="widget-details col-xs-3">
+                                <h2 class="no-margin">
+                                    @monthtotal
+                                </h2>
+                                <small class="text-uppercase">
+                                    本月访问
+                                </small>
+                            </div>
+                            <div class="widget-details col-xs-3">
+                                <h2 class="no-margin">
+                                    @alltotal
+                                </h2>
+                                <small class="text-uppercase">
+                                    总访问
+                                </small>
+                            </div>
+                        </section>
+                    </div>
+                </div>              
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="widget bg-white">
+                            <div class="widget-details widget-list">
+                                <div class="mb20">
+                                    <h4 class="no-margin text-uppercase">
+                                        最新添加新闻
+                                    </h4>
+                                    <small class="text-uppercase">
+                                        News
+                                    </small>
+                                </div>
+                                @{
+                                    IEnumerable<documents> nlist = new documentsService().Take(1, 6);
+                                    foreach (var n in nlist)
+                                    {
+                                        <a class="widget-list-item" href="javascript:;">
+                                            <span class="pull-right">
+                                                @n.createdate
+                                            </span>
+                                            @n.title
+                                        </a>
+                                    }
+                                }       
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="widget bg-white">
+                            <div class="widget-details widget-list">
+                                <div class="mb20">
+                                    <h4 class="no-margin text-uppercase">
+                                        最新添加产品
+                                    </h4>
+                                    <small class="text-uppercase">
+                                        Products
+                                    </small>
+                                </div>
+                                @{
+                                    IEnumerable<documents> plist = new documentsService().Take(2, 6);
+                                    foreach (var p in plist)
+                                    {
+                                        <a class="widget-list-item" href="javascript:;">
+                                            <span class="pull-right">
+                                            @p.createdate
+                                            </span>
+                                            @p.title
+                                        </a>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>        
+</body>
+</html>

@@ -1,0 +1,168 @@
+﻿@using LONG.Models
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Master/Views/Shared/ListLayout.cshtml";
+}
+<script type="text/javascript" language="JavaScript">
+    var article_search_js_sid_err = "请选择所属模型";
+    var article_search_js_searchkey_err = "搜索关键字中含有非法字符，禁止输入'\"<>\,;\^@('@')#$()!.字符，请重新输入";
+    var ordermain_infolist_js_selecterr = "抱歉！您还没有选择任何数据，请重新选择！";
+    var ordermain_infolist_js_selecterr_max = "抱歉！您只允许选择一篇内容！";
+    var select_no = "您未选择要操作的数据，请返回重新选择！";
+    var inputtext = "@ViewBag.inputtext";
+	var iframename = "@ViewBag.iframename";
+    var checkfrom = "@ViewBag.checkfrom";
+    var getbyid = "@ViewBag.getbyid";
+    var digheight = "370";
+    var lng = "cn";
+    var selectmax = Number(0);
+    var delid = "@ViewBag.delid";
+    var checkedIDs = [@ViewBag.ids];    //记录选中的复选框ID
+
+	$(document).ready(function () {
+	    var h = parseInt(digheight);
+	    $("#mainnextbody").hide();
+	    $("#selectbotton").hide();
+	    $("#selectbotton2").hide();
+	    $("#listitle").hide();
+	    $('.ordersearchdiv').css({ height: h - 35 });
+	    var esarchurl = "@Url.Action("SelectPageList")?keywords=";
+	    articlesearch(esarchurl)
+	})
+
+    function articlesearch(loadurl) {
+        $('#mainwindowhidden').removeClass().addClass('ordersearchdiv displaynone');
+        $("#mainnextbody").show();
+        $("#selectbotton").show();
+        $("#selectbotton2").show();
+        $("#listitle").show();
+        var h = parseInt(digheight);
+
+        var formlist = document.getElementById('selectform');
+
+        var loadurl = loadurl;
+
+        var maxperpage = formlist.elements[1].value;
+
+        var maxhit = formlist.elements[2].value;
+
+        var nowpage = formlist.elements[3].value;
+
+        var loadname = formlist.elements[6].value;
+
+        var pagetextname = formlist.elements[7].value;
+
+        var pagebottonname = formlist.elements[8].value;
+        formlist.elements[0].value = loadurl;
+        pageDimensions(10000, maxperpage, maxhit, nowpage, loadurl, loadname, pagetextname, pagebottonname, 'selectform');
+        $('.ordersearchdiv').css({ height: h - 65 });
+    }
+
+    function selectback() {
+        var str = document.getElementsByName("articleselectinfoid");
+        var objarray = str.length;
+        var chestr = checkedIDs;
+        if (selectmax > 0) {
+            chestr = chestr.substring(0, chestr.length - 1);
+            var chestrnum = chestr.split(',');
+            if (chestrnum.length > selectmax) {
+                alert(ordermain_infolist_js_selecterr_max);
+                return false;
+            }
+        }
+        if (count_checked_items('selectform') > 0) {
+            fnupdate(chestr);
+        } else {
+            alert(ordermain_infolist_js_selecterr);
+            $('#mainwindowhidden').removeClass().addClass('ordersearchdiv displaytrue');
+            $("#mainnextbody").hide();
+            $("#selectbotton").hide();
+            $("#selectbotton2").hide();
+            $("#listitle").hide();
+            return false;
+        }
+    }
+
+    function fnupdate(chestr) {
+        if (checkfrom == 'input') {
+            checkinput(chestr);
+        } else if (checkfrom == 'function') {
+            functionshow(chestr, inputtext, getbyid);
+        }
+    }
+    
+    function checkinput(chestr) {
+        parent.frames[iframename].document.getElementById(inputtext).value = chestr;
+        parent.closeifram();
+    }
+
+    function functionshow(chestr, inputtext, getbyid) {
+        parent.frames[iframename].addinfolist('@Url.Action("SelectQuicklist", new { inputtext = ViewBag.inputtext })', chestr, inputtext, getbyid);
+	    parent.closeifram();
+	}
+	/*
+    翻页时记录复选框状态
+    */
+	function f_onCheckAllRow(obj) {
+	    if (obj.checked == true) {
+	        addCheckedIDs(obj.value);
+	    } else {
+	        removeCheckedIDs(obj.value);
+	    }
+	}
+	function findCheckedIDs(items) {
+	    for (var i = 0; i < checkedIDs.length; i++) {
+	        if (checkedIDs[i] == items) return i;
+	    }
+	    return -1;
+	}
+	function addCheckedIDs(items) {
+	    if (findCheckedIDs(items) == -1)
+	        checkedIDs.push(items);
+	}
+	function removeCheckedIDs(items) {
+	    var i = findCheckedIDs(items);
+	    if (i == -1) return;
+	    checkedIDs.splice(i, 1);
+	}
+	function checkIDs() {
+	    return checkedIDs;
+	}
+</script>
+<div class="centerrightwindow">
+	<div id="mainwindowhidden" class="ordersearchdiv displaytrue">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="padding-left5 colorgorningage">请在以下输入框中操作您要搜索的信息</span></span>
+		</div>
+		<div class="sugtitle-line"></div>		
+	</div>
+<div class="listitle2" id="listitle">
+<table width="100%" bordercolor="#FFFFFF" border="0">
+	<tbody><tr>
+		<td width="8%"><input type="checkbox" onclick="select_ok('selectform', 'selectall', 'check_all');" value="1" id="check_all" name="check_all"></td>
+		<td width="12%">ID</td>
+		<td width="80%">菜单名称</td>
+	</tr>
+</tbody></table>
+</div>
+	<div id="mainnextbody" class="ordersearchdiv tabnextlist">
+		<form name="selectform" id="selectform" method="post">
+		<input type="hidden" name="loadurl" id="loadurl" value="">
+		<input type="hidden" name="maxperpage" id="maxperpage" value="20">
+		<input type="hidden" name="maxhit" id="maxhit" value="4">
+		<input type="hidden" name="nowpage" id="nowpage" value="0">
+		<input type="hidden" name="limitkey" id="limitkey" value="">
+		<input type="hidden" name="limitclass" id="limitclass" value="">
+		<input type="hidden" name="loadname" id="loadname" value="#articleloading">
+		<input type="hidden" name="pagetextname" id="pagetextname" value="#pageinfo3">
+		<input type="hidden" name="pagebottonname" id="pagebottonname" value="#Pagination3">
+		<div class="loadingdiv" id="articleloading"></div>
+		</form>
+	</div>
+	
+	<div class="pagelistdiv">
+		<div class="pageinfotext displaynone" id="pageinfo3"></div>
+		<div id="selectbotton" class="pageinfotext" style="padding-top:5px;"><input type="reset" name="reset" onClick="javascript: selectback();" id="release" value="确认添加" class="buttonface"  title="确认添加" /></div>
+		<div class="pagebottonlist" id="pagebotton"><span id="Pagination3" class="pagination"></span></div>
+	</div>
+</div>

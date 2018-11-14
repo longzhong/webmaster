@@ -1,0 +1,145 @@
+﻿@using LONG.Models
+@{
+    ViewBag.Title = "ByContentContent";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var createmain_js_mid_empty = "模型未选择，请选择要生成的模型！";
+    var createmain_js_id_empty = "起始ID或结束ID填写错误，请填写大于0的整数数值！";
+    var iframename = "";
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var options_doc = {
+            beforeSubmit: formverify_doc,
+            success: saveResponse
+        }
+        $("#creatdoc").submit(function () {
+            $(this).ajaxSubmit(options_doc);
+            return false;
+        });
+    });
+    function formverify_doc(formData, jqForm, options) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        if (get['modelid'] == 0) {
+            document.creatdoc.modelid.focus();
+            alert(createmain_js_mid_empty);
+            return false;
+        }
+        if (get['startid'] != '' || get['endid'] != '') {
+            if (get['startid'].match(/^[1-9]{1}[0-9]*$/ig) == null && get['endid'].match(/^[1-9]{1}[0-9]*$/ig) == null) {
+                document.creatdoc.startid.focus();
+                alert(createmain_js_id_empty);
+                return false;
+            }
+        }
+        var loadurl = '@Url.Action("CreateContent","Common")?modelid=' + get['modelid'] + '&categorylist=' + $('#category').val() + '&startid=' + get['startid'] + '&endid=' + get['endid'];
+		parent.windowsdig('Loading', 'iframe:' + loadurl, '750px', '400px', 'iframe', false);
+		return false;
+    }
+    function saveResponse(options) {
+        parent.closeifram();
+        if (options == true) {
+            alert(createmain_js_add_ok);
+        } else {
+            alert(createmain_js_add_no);
+        }
+        parent.onaletdoc()
+    }
+
+    function searchoption(modelid) {
+        selectmodel('category', '@Url.Action("OptionList", "ModelCategory")?modelid=' + modelid + '&ishtml=true');
+	}
+
+</script>
+<form method="post" name="creatdoc" id="creatdoc" action="#">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中选持要生成的内容属性</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle2 displaynone">
+						<td class="trtitle01">语言</td>
+						<td class="trtitle02">
+                            <select size="1" name="lng" id="lng" onchange="javascript:lngtype(this.value);">
+                                <option selected value="cn">简体中文版</option>
+                                <option  value="big5">繁体中文版</option>
+                                <option  value="en">English</option>
+                            </select>
+                        </td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">所属模型</td>
+						<td class="trtitle02">
+							<select size="1" name="modelid" id="modelid" onchange="javascript:searchoption(this.value)">
+								<option value="0">请选择要生成的模型</option>
+								@{
+                                    IEnumerable<sys_model> mlist = new sys_modelService().List(); //非单页面
+                                    foreach (var l in mlist)
+                                    {
+                                    <option value="@l.id">@l.title</option>
+                                    }
+                                 }
+                            </select>
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">生成所属分类</td>
+						<td class="trtitle02">
+							<select size="8" name="category" id="category" multiple="multiple">
+                                <optgroup label="请选择所属副分类（按Ctrl+左键可进行多选）">
+								<option value="0">全部</option>
+                                </optgroup>
+							</select>
+						</td>
+					</tr>
+					<tr class="trstyle2 displaynone">
+						<td class="trtitle01">起始内容ID</td>
+						<td class="trtitle02">
+							<input type="text" name="startid" size="5" maxlength="4" class="infoInput"/>
+							<span class="cautiontitle">请填写填于0的整数数值，并保证起始ID大于或等于现在内容的最小ID值</span>
+						</td>
+					</tr>
+					<tr class="trstyle2 displaynone">
+						<td class="trtitle01">结束内容ID</td>
+						<td class="trtitle02">
+							<input type="text" name="endid" size="5" maxlength="4" class="infoInput"/>
+							<span class="cautiontitle">请填写填于0的整数数值，并保证结束ID小于或等于现在内容的最大ID值</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td><input type="submit" name="Submit" value="确认生成" class="buttonface" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html class="wide wow-animation scrollTo smoothscroll" lang="en">
+  <head>
+    <!-- Site Title-->
+    <title>{lw:global.title} - YIPAK</title>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="keywords" content="intense web design multipurpose template html">
+    <meta name="date" content="Dec 26">
+    <link rel="icon" href="/Templates/default/cn/images/favicon.ico" type="image/x-icon">
+    <!-- Stylesheets-->
+    <link rel="stylesheet" href="/Templates/default/cn/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/Templates/default/cn/css/yipak.css">
+    <!--[if lt IE 10]>
+    <div style="background: #212121; padding: 10px 0; box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3); clear: both; text-align:center; position: relative; z-index:1;"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="images/ie8-panel/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
+    <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <!-- Page-->
+    <div class="page text-center">
+      {lw:include file="public/header.html"}
+      <!-- Classic Breadcrumbs-->
+      <section style="background: url(/Templates/default/cn/images/intense/banner.png) center top no-repeat;" class="yipak_banner">
+        <div class="shell">
+          <div class="range range-lg-middle cell-xs-6 cell-md-12">
+            <div class="small">
+              <ul class="list-inline list-inline-dashed p">
+                <li><a href="/">Home</a></li> » 
+                {lw:global.navigation}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Page Content-->
+      {lw:about}
+      <input type="hidden" id="docid" value="{lw:field.docid}">
+      <main class="page-content section-10">
+        <div class="shell">
+          <div class="range range-xs-center">
+            <div class="cell-md-9 cell-md-push-2">
+              <div class="inset-md-left-20">
+                <!-- Blog Default Single-->
+                <section>
+                  {lw:field.content}
+                </section>
+              </div>
+            </div>
+            <div class="cell-md-3 cell-md-push-1 offset-top-34 offset-md-top-0">
+              <!-- Section Blog Modern-->
+              {lw:include file="public/about-left.html"}
+            </div>
+          </div>
+        </div>
+      </main>
+      {/lw:about}	
+      <!-- Page Footers-->
+      {lw:include file="public/footer.html"}
+    </div>
+    <!-- JavaScript-->
+    <script src="/Templates/default/cn/js/core.min.js"></script>
+    <script src="/Templates/default/cn/js/script.js"></script>
+    </body>
+</html>

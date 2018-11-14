@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html class="wide wow-animation scrollTo smoothscroll" lang="en">
+  <head>
+    <!-- Site Title-->
+    <title>{lw:global.title} - YIPAK</title>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="keywords" content="intense web design multipurpose template html">
+    <meta name="date" content="Dec 26">
+    <link rel="icon" href="/Templates/default/cn/images/favicon.ico" type="image/x-icon">
+    <!-- Stylesheets-->
+    <link rel="stylesheet" href="/Templates/default/cn/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/Templates/default/cn/css/yipak.css">
+    <!--[if lt IE 10]>
+    <div style="background: #212121; padding: 10px 0; box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3); clear: both; text-align:center; position: relative; z-index:1;"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="images/ie8-panel/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
+    <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <!-- Page-->
+    <div class="page text-center">
+       {lw:include file="public/header.html"}
+       <!-- Classic Breadcrumbs-->
+      <section style="background: url(/Templates/default/cn/images/intense/banner.png) center top no-repeat;" class="yipak_banner">
+        <div class="shell">
+          <div class="range range-lg-middle cell-xs-6 cell-md-12">
+            <div class="small">
+              <ul class="list-inline list-inline-dashed p">
+                <li><a href="/">Home</a></li> » 
+                {lw:global.navigation}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Page Content-->
+      <main class="page-content section-10">
+        <!-- section join our team-->
+        <section>
+          <div class="shell">
+            <div class="range range-xs-center">
+              <div class="cell-xs-8">
+                <h1>Download</h1>
+                <div>
+                  <hr class="divider bg-mantis">
+                </div>
+                <div class="offset-top-20">
+                  <p>Take a job opportunity of a lifetime – join the team of Intense. We cherish active tech savvies willing to work on projects of any type and complexity. If you are enthusiastic about tech innovations and ready to make impactful decisions, feel free to send us your CV. We are interested in hiring professionals for a long term and also provide an opportunity of remote work.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="section-98">
+          <div class="shell">
+            <div class="range">
+              {lw:loop}
+              <div class="cell-sm-6 offset-top-30 offset-sm-top-0">
+                        <a class="post-vacation text-left" href="{field.linkurl}" target="_blank">
+                          <div>
+                            <h3>{field.title}</h3>
+                          </div>
+                          <div class="post-meta offset-top-10">
+                            <ul class="list-inline list-inline-sm p">
+                              <li><span class="text-middle icon-xxs mdi mdi-clock text-picton-blue"></span> <span class="text-middle small text-dark">{field.writertime format="mm-dd,yyyy"}</span>
+                              </li>
+                              <li><span class="text-middle icon-xxs mdi mdi-apple-mobileme text-picton-blue"></span> 
+                                <time class="text-middle small text-dark">{field.summary}</time>
+                              </li>
+                            </ul>
+                          </div>
+                          </a>
+              </div>
+              {/lw:loop}
+            </div>
+             <div class="offset-top-66">
+                {lw:page max=8"}
+                <!-- Bootstrap Pagination-->
+                <nav>
+                  <ul class="pagination pagination-sm">
+                    <li><a href="/{field.index}" aria-label="First"><span class="mdi mdi-chevron-double-left" aria-hidden="true"></span>FIRST</a></li>
+                    <li><a href="/{field.front}" aria-label="Prev"><span class="mdi mdi-chevron-left" aria-hidden="true"></span>PREV</a></li>
+                    
+                    <li><a href="/{field.next}" aria-label="Next">NEXT<span class="mdi mdi-chevron-right" aria-hidden="true"></span></a></li>
+                    <li><a href="/{field.last}" aria-label="Last">LAST<span class="mdi mdi-chevron-double-right" aria-hidden="true"></span></a></li>
+                  </ul>
+                </nav>
+                {/lw:page}
+              </div>
+          </div>
+        </section>
+      </main>
+      <!-- Page Footers-->
+      {lw:include file="public/footer.html"}
+    </div>
+    <!-- JavaScript-->
+    <script src="/Templates/default/cn/js/core.min.js"></script>
+    <script src="/Templates/default/cn/js/script.js"></script>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+﻿@using LONG.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string close_content = Utility.GetConfig("close_content");
+    string sitetel = Utility.GetConfig("sitetel");
+}
+    <div class="sy_page">
+	<div class="sy_member_login_center sy_formwidth_c">
+		<div class="title mb20"><div class="messageicon2"></div><div class="messtitle">信息提醒</div></div>
+		<div class="sy_form_group tc f14 oninage b">@close_content</div>
+		<div class="sy_form_group tc f14">您可以直接与我们取得联系，电话：@sitetel。</div>	
+	</div>
+    </div>

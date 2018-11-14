@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "ActionLog";
+    Layout = "~/Areas/Master/Views/Shared/PageListLayout.cshtml";
+}
+<script type="text/javascript">
+    function deleteAll() {
+        swal({
+            title: "确定清空吗?",
+            text: "您将清空所有日志，并且无法恢复!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定",
+            closeOnConfirm: false
+        },
+        function () {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("DeleteActionLog", new { usercode = ViewBag.usercode })",
+                success: function (data) {
+                    if (data == true) {
+                        window.location.reload();
+                        parent.success_alert("您此次操作已成功！");
+                    } else {
+                        parent.error_alert("您此次操作失败！");
+                    }
+                }
+            })
+        });
+    }
+</script>
+<div id="mainlistbotton">
+<ul class="listbottonul" id="listbottonul">
+    <li class="menumain"><a class="btn btn-danger btn-sm mr10" onclick="javascript:deleteAll()" href="#body" hidefocus="true"><i class="fa fa-remove"></i><b>清空日志</b></a></li>
+	<li class="menumain"><a class="btn btn-info btn-sm" href="#body" onclick="javascript:refresh('selectform','selectall','check_all');" title="刷新" hidefocus="true"><i class="fa fa-refresh"></i><b>刷新</b></a></li>
+</ul>
+</div>
+<div class="listitle"><table border="0" width="100%" bordercolor="#FFFFFF">
+	<tr>
+		<td width="4%"><input type="checkbox" name="check_all" value="1" id="check_all" onClick="select_ok('selectform', 'selectall', 'check_all');"/></td>
+		<td width="10%">操作帐号</td>
+		<td width="20%">用户名</td>
+		<td width="20%">操作方法</td>
+		<td width="10%">操作时间</td>
+		<td width="36%">说明</td>
+	</tr>
+</table>
+</div>
+<div id="mainbody" class="tablist">
+	<form name="selectform" id="selectform" method="post">
+		<input type="hidden" name="loadurl" id="loadurl" value="@Url.Action("ActionLogList", new { usercode = ViewBag.usercode })">
+		<input type="hidden" name="maxperpage" id="maxperpage" value="20">
+		<input type="hidden" name="maxhit" id="maxhit" value="5">
+		<input type="hidden" name="nowpage" id="nowpage" value="0">
+		<input type="hidden" name="limitkey" id="limitkey" value="">
+		<input type="hidden" name="limitclass" id="limitclass" value="">
+		<input type="hidden" name="loadname" id="loadname" value="#loadingtabelist">
+		<input type="hidden" name="pagetextname" id="pagetextname" value="#pageinfo">
+		<input type="hidden" name="pagebottonname" id="pagebottonname" value="#Pagination">
+		<input type="hidden" name="oldloadurladd" id="oldloadurladd" value="@Url.Action("ActionLogList", new { usercode = ViewBag.usercode })">
+		<input type="hidden" name="pagelistcut" id="pagelistcut" value="0">
+		<div class="loadingdiv" id="loadingtabelist"></div>
+	</form>
+</div>
+<div class="pagelistdiv">
+	<div class="pageinfotext" id="pageinfo"></div>
+	<div class="pagebottonlist" id="pagebotton"><span id="Pagination" class="pagination"></span></div>
+</div>

@@ -1,0 +1,158 @@
+﻿@using LONG.Models
+@model LONG.Models.messages
+@{
+    ViewBag.Title = "Read";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+	var resizewindow= null;
+
+	window.onresize = function(){
+		var h = $(window).height();
+		if(resizewindow!=h){
+			sizewindow();
+			resizewindow=h;
+		}
+	}
+
+	function sizewindow(){
+		var h = $(window).height();
+		if(document.getElementById("mainbodybottonauto")){
+			$('.managebottonadd').css({height:h-40});
+		}
+	}
+	var js_recontent_empty  = "请填写回复内容";
+	var js_size_empty  = "参数填写错误";
+	var js_edit_ok = "恭喜！内容留言回复成功！";
+	var js_edit_no = "抱歉！内容留言回复失败！";
+	var iframename = "@ViewBag.iframename";
+	iframename = iframename=='' ? "jerichotabiframe_0" : iframename;
+	var addtype = "edit";
+	$(document).ready(function(){
+	    var h = $(window).height();
+		$('.managebottonadd').css({height:h-40});
+		var options = {
+			beforeSubmit: formverify,
+			success:saveResponse,
+			resetForm: false
+		}
+		$('#infosave').submit(function() {
+			$(this).ajaxSubmit(options);
+			return false;
+		});
+	})
+
+	function formverify(formData) {
+		var queryString = $.param(formData);
+		var get=urlarray(queryString);
+		if (get['replycontent'] == '') {
+		    document.infosave.replycontent.focus();
+		    parent.basic_alert(js_recontent_empty);
+			return false;
+		}
+		//parent.windowsdig('Loading','iframe:@Url.Action("Loading","Common")','400px','180px','iframe',false);
+	}
+	function saveResponse(options){
+		//parent.closeifram();
+		if (options==true){
+			if(parent.frames[iframename].document.getElementById("selectform")){
+				parent.frames[iframename].refresh('selectform','selectall','check_all');
+			}
+			parent.success_alert(js_edit_ok);
+		}else{
+		    parent.error_alert(js_edit_no);
+		}
+		parent.onaletdoc()
+	}
+</script>
+<form name="infosave" id="infosave" method="post" action="@Url.Action("Reply", new { whoid = Model.id })">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中查看底盘详细内容</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+                <table class="formtable">
+                    <tr class="trstyle2">
+                        <td class="trtitle01">姓名</td>
+                        <td class="trtitle02">@Model.name</td>
+                    </tr>
+                    <tr class="trstyle2">
+                        <td class="trtitle01">电话</td>
+                        <td class="trtitle02">@Model.tel</td>
+                    </tr>
+                    <tr class="trstyle2">
+                        <td class="trtitle01">Email</td>
+                        <td class="trtitle02"><a href="mailto:@Model.email">@Model.email</a></td>
+                    </tr>
+                    <tr class="trstyle2">
+                        <td class="trtitle01">内容</td>
+                        <td class="trtitle02">@Model.content</td>
+                    </tr>
+                    <tr class="trstyle2 hidden">
+                        <td class="trtitle01">邮件回复内容</td>
+                        <td class="trtitle02">
+                            <textarea name="replycontent" cols="50" rows="5" class="form-control">@Model.replycontent</textarea>
+                            <span class="cautiontitle">此功能必须先设置SMTP参数进行设定</span>
+                        </td>
+                    </tr>
+                    <tr class="trstyle2">
+                        <td class="trtitle03" colspan="2">以是是留言基本属性</td>
+                    </tr>
+                    <tr class="trstyle2 hidden">
+                        <td class="trtitle01">IP</td>
+                        <td class="trtitle02">@Model.ipaddress</td>
+                    </tr>
+                    <tr class="trstyle2 hidden">
+                        <td class="trtitle01">所在城市</td>
+                        <td class="trtitle02">@Model.city</td>
+                    </tr>
+                    <tr class="trstyle2">
+                        <td class="trtitle01">发送时间</td>
+                        <td class="trtitle02">@Model.createdate</td>
+                    </tr>
+                    <tr class="trstyle2 hidden">
+                        <td class="trtitle01">回复时间</td>
+                        <td class="trtitle02">
+                            @{
+                                if (string.IsNullOrEmpty(Model.replycontent))
+                                {
+                                    <span class="strong colorgreg">未回复</span>
+                                }
+                                else
+                                {
+                                    <span class="strong colorgreg">@Model.replydate</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                </table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+        <table width="100%">
+            <tr class="hidden">
+                @{
+                    if (string.IsNullOrEmpty(Model.replycontent))
+                    {
+                        <td id="right"><input type="submit" id="docaddsubmitbotton" name="Submit" value="确认回复" class="btn btn-primary mr10" /></td>
+                        <td id="left" class="padding-left5"><input type="button" name="cancel" onclick="javascript: closewindow();" value="取消回复" class="btn btn-danger mr10" /></td>
+                    }
+                    else
+                    {
+                        <td><input type="button" name="cancel" onclick="javascript: closewindow();" value="返回列表" class="btn btn-default" /></td>
+                    }
+                }
+            </tr>
+            <tr>
+                <td><input type="button" name="cancel" onclick="javascript: closewindow();" value="返回列表" class="btn btn-primary mr10" /></td>
+            </tr>
+        </table>
+	</div>
+</div>
+</form>

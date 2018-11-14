@@ -1,0 +1,12 @@
+﻿@using LONG.Models
+@using System.Text
+@{
+    string modelname = string.Empty;
+    if (ViewBag.modelid != null)
+    {
+        sys_model model = new sys_modelService().Query(ViewBag.modelid);
+        modelname = model.title;
+    }
+    ViewBag.Title = modelname + "类别";
+    Layout = "~/Areas/Master/Views/Shared/CommonLayout.cshtml";
+}

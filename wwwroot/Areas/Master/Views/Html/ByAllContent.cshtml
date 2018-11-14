@@ -1,0 +1,100 @@
+﻿@using LONG.Models
+@{
+    ViewBag.Title = "ByAllContent";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var iframename = "";
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var optionsbat = {
+            beforeSubmit: bat_formverify,
+            success: function () { }
+        }
+        $("#createbat").submit(function () {
+            $(this).ajaxSubmit(optionsbat);
+            return false;
+        });
+    })
+    function bat_formverify(formData, jqForm, options) {
+        var queryString = $.param(formData);
+        var get = urlarray(queryString);
+        var loadurl = '@Url.Action("CreateAll","Common")?isbatdoc=' + get['isbatdoc'] + '&creattype=' + get['creattype'] + '&startdate=' + get['startdate'];
+        parent.windowsdig('Loading', 'iframe:' + loadurl, '750px', '400px', 'iframe', false);
+        return false;
+    }
+</script>
+<form method="post" name="createbat" id="createbat" action="@Url.Action("CreateAll")">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中选择要批量生成的语言版本</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle2 displaynone">
+						<td class="trtitle01">语言</td>
+						<td class="trtitle02">
+                            <select size="1" name="lng">
+                                <option selected value="cn">简体中文版</option>
+                                <option  value="big5">繁体中文版</option>
+                                <option  value="en">English</option>
+                            </select>
+                        </td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">内容更新时间</td>
+						<td class="trtitle02">
+							<input type="radio" value="1" name="creattype" onclick="ondisplay('validatetextdiv', 'trstyle2 displaytrue')"/> 按日期更新&nbsp;
+							<input type="radio" value="0" name="creattype" checked="checked" onclick="ondisplay('validatetextdiv', 'trstyle2 displaynone')"/> 全部时间						</td>
+					</tr>
+					<tr class="trstyle2 displaynone" id="validatetextdiv">
+						<td class="trtitle01">输入起始日期</td>
+						<td class="trtitle02">
+							<input type="text" name="startdate" id="startdate" maxlength="20" size="20" value="@DateTime.Now.ToShortDateString().Replace("/","-")" onclick="WdatePicker({ el: 'startdate', readOnly: true, dateFmt: 'yyyy-MM-dd' })" class="infoInput">
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">更新方式</td>
+						<td class="trtitle02">
+							<input type="radio" value="1" name="isbatdoc" checked/> 全部更新&nbsp;
+						</td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01"></td>
+						<td class="trtitle02 colorghow lineheight160">提示说明：<br/>如果网站数据较大，推荐按日期更新</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td><input type="submit" name="Submit" value="确认生成" class="buttonface" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>

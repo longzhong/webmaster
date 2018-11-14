@@ -1,0 +1,155 @@
+﻿@using LONG.Core;
+@using LONG.Models;
+@using LONG.Web;
+@using LONG.Tool;
+@{
+    Layout = null;
+    var loginer = FormsAuth.GetUserData<LoginerBase>();
+    sys_user user = new sys_userService().Query(loginer.UserCode);
+    string lngtitle = string.Empty;
+    string lng = Utility.ReadCookie("lng");
+    if (!string.IsNullOrEmpty(lng))
+    {
+        lngtitle = new sys_lngService().Query(lng).title;
+    }
+    else
+    {
+        Response.Redirect(Url.Action("Logout", "Login"));
+    }
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>内容管理控制面板</title>
+    <style type="text/css">
+        *{
+            padding: 0;
+            margin: 0;
+            border: 0;
+            font-size: 12px;
+        }
+    </style>
+    <link href="/areas/master/themes/css/all.css" rel="stylesheet" type="text/css" />
+    <link href="/areas/master/themes/index/main.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/areas/master/scripts/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="/areas/master/scripts/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/areas/master/scripts/form.js"></script>
+    <script type="text/javascript" src="/areas/master/scripts/control.js"></script>
+    <script type="text/javascript" src="/areas/master/scripts/dialog.js"></script>
+    <script type="text/javascript" src="/areas/master/themes/index/js/common.js"></script>
+    <script type="text/javascript" src="/areas/master/themes/index/js/menu.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+    function clickMenu(index)
+    {   
+         var menus=document.getElementsByName("mainMenu");
+         menus[index].className="btn btn-primary btn-sm mr5";
+         for(var i=0;i<menus.length;i++)
+         {
+              if(i!= index)
+              {
+                  menus[i].className = "btn btn-info btn-sm mr5";
+              }
+         }
+       
+    }
+    var refreshList=false;//用作返回列表时是否刷新
+    var menu_MCount="@ViewBag.MainMenuCount";
+    var menu_M = new Array(@Html.Raw(ViewBag.MainMenuItem));
+    var menu_S=new Array(@ViewBag.MainMenuCount);
+    @Html.Raw(ViewBag.SubMenuItem)
+    var menu_SChildCount="@ViewBag.SubChildMenuCount";
+    var menu_SChild=new Array(@ViewBag.SubChildMenuCount);
+    @Html.Raw(ViewBag.SubChildMenuItem)
+    (function (a) {
+        a.fn.hoverClass = function (b) {
+            var a = this;
+            a.each(function (c) {
+                a.eq(c).click(function () {
+                    if ($(this).hasClass(b)) {
+                        $(this).removeClass(b)
+                    } else {
+                        $(this).addClass(b)
+                    }
+                }, function () {
+                    $(this).removeClass(b)
+                })
+            });
+            return a
+        };
+    })(jQuery);
+
+	//$(function () {
+	//    $("#navbox").hoverClass("current");
+	//});
+	//退出
+    function locationout() {
+        swal({
+            title: "确定退出吗?",
+            text: "您将退出管理系统!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定",
+            closeOnConfirm: false
+        },
+        function () {
+            window.location.replace('@Url.Action("Logout", "Login")');
+        });	    
+   }
+    </script>
+    <form name="form1" method="post" action="@Url.Action("Index", "Home")" id="form1">
+    <div class="frmain">
+        <div class="frleft">
+            <div class="frlogo" title=""><img src="/Areas/Master/Themes/login/logo.png" height="35" /></div>
+            <div class="frtext"><span class="btn btn-info btn-round">网站后台管理系统</span></div>
+            <div class="lanm">
+                <script type="text/javascript">CreateMainMenu();</script>               
+            </div>
+        </div>
+        <div class="frright main-panel">
+            <header class="header navbar">
+                <ul class="nav navbar-nav hidden-xs">
+                    <li>
+                        <p class="navbar-text">
+                            @Utility.GetConfig("sitename")
+                        </p>
+                    </li>
+                </ul>
+                <ul class="navbar-menu hidden-xs">
+                    <li>
+                        <a href="@Url.Action("Welcome", "Home")" class="btn btn-info btn-sm mr5" target="frmMain" name='mainMenu' onclick="javascript:clickMenu(0)"><i class="fa fa-home"></i> 后台首页</a>
+                        <a href="@Url.Action("doAction", "document", new { modelid = 1, act = "add" })" class="btn btn-info btn-sm mr5" target="frmMain" onclick="javascript:clickMenu(1)" name='mainMenu'><i class="fa fa-plus"></i> 录入新闻</a>
+                        <a href="@Url.Action("doAction", "document", new { modelid = 2, act = "add" })" class="btn btn-info btn-sm mr5" target="frmMain" onclick="javascript:clickMenu(2)" name='mainMenu'><i class="fa fa-plus"></i> 录入产品</a>
+                        <a href="/" class="btn btn-danger btn-sm" target="_blank"><i class="fa fa-desktop"></i> 网站首页</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right hidden-xs">
+                    <li>
+                        <div class="avatar">
+                            <a href="@Url.Action("doAction", "User", new { act="edit", whoid = user.id})" target="frmMain">
+                                <img title="我的个人中心" alt="我的个人中心" class="header-avatar img-circle ml10" src="@user.userface">
+                                <span class="pull-left">
+                                    您好, @ViewBag.UserName
+                                </span>
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="toolbar">
+                            <a class="btn btn-default btn-round btn-sm" href="javascript:void(0)" onclick="javascript:parent.windowsdig('密码修改','iframe:@Url.Action("Password","User")','680px','400px','iframe');"><i class="fa fa-key"></i> 修改密码</a>
+                            <a class="btn btn-default btn-round btn-sm" href="javascript:void(0)" onclick="locationout()"><i class="fa fa-power-off"></i> 退出</a>
+                        </div>
+                    </li>
+                </ul>
+            </header>
+            <div id="tdMain">
+                <iframe frameborder="0" id="frmMain" name="frmMain" src="@Url.Action("Welcome", "Home")" style="overflow-x: hidden;" scrolling="yes"></iframe>
+            </div>
+        </div>
+    </div>
+    </form>
+</body>
+</html>

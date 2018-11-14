@@ -1,0 +1,99 @@
+﻿@using LONG.Models
+@{
+    ViewBag.Title = "ByIndexContent";
+    Layout = "~/Areas/Master/Views/Shared/ActionLayout.cshtml";
+}
+<script type="text/javascript">
+
+    var resizewindow = null;
+
+    window.onresize = function () {
+        var h = $(window).height();
+        if (resizewindow != h) {
+            sizewindow();
+            resizewindow = h;
+        }
+    }
+
+    function sizewindow() {
+        var h = $(window).height();
+        if (document.getElementById("mainbodybottonauto")) {
+            $('.managebottonadd').css({ height: h - 40 });
+        }
+    }
+    var createmain_js_mid_empty = "模型未选择，请选择要生成的模型！";
+    var createmain_js_pnumber_empty = "生成最大页数填写错误，请填写大于0的整数数值！";
+    var createmain_js_tid_empty = "当前生成需要指定分类，请选择要生成的分类！";
+    var createmain_js_add_ok = "恭喜！生成成功！";
+    var createmain_js_add_no = "抱歉！生成失败！";
+    var iframename = "";
+    iframename = iframename == '' ? "jerichotabiframe_0" : iframename;
+    $(document).ready(function () {
+        var h = $(window).height();
+        $('.managebottonadd').css({ height: h - 40 });
+        var options = {
+            beforeSubmit: formverify,
+            success: saveResponse
+        }
+        $("#creatindex").submit(function () {
+            $(this).ajaxSubmit(options);
+            return false;
+        });
+    })
+
+
+
+
+    function formverify(formData) {
+        parent.windowsdig('Loading', 'iframe:@Url.Action("Loading","Common")', '400px', '180px', 'iframe', false);
+	}
+	function saveResponse(options) {
+	    parent.closeifram();
+        if (options == true) {
+            toastr.success(createmain_js_add_ok);
+	    } else {
+            toastr.warning(createmain_js_add_no);
+	    }
+	    parent.onaletdoc()
+	}
+</script>
+<form method="post" name="creatindex" id="creatindex" action="@Url.Action("CreateIndex")">
+<div id="mainbodybottonauto" class="managebottonadd">
+	<div class="maindobycontent">
+		<div class="suggestion">
+			<span class="sugicon"><span class="strong colorgorning2">当前操作提示：</span><span class="colorgorningage">请在以下窗口中选择主页生成属性</span></span>
+		</div>
+		<div class="manageeditdiv">
+			<div class="maneditcontent">
+				<table class="formtable">
+					<tr class="trstyle2 displaynone">
+						<td class="trtitle01">语言</td>
+						<td class="trtitle02">
+                            <select size="1" name="lng" id="lng" disabled>
+                                <option selected value="cn">简体中文版</option>
+                                <option  value="big5">繁体中文版</option>
+                                <option  value="en">English</option>
+                            </select>
+                        </td>
+					</tr>
+					<tr class="trstyle2">
+						<td class="trtitle01">生成路径</td>
+						<td class="trtitle02">
+                            /@Utility.GetConfig("entrance_file")@Utility.GetConfig("file_fileex")<span class="cautiontitle">可以在系统设置中对网站首页名称和扩展名进行更改</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="downbotton">
+	<div id="subbotton">
+		<table border="0" width="100%">
+			<tr>
+				<td><input type="submit" name="Submit" value="确认生成" class="buttonface" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>
